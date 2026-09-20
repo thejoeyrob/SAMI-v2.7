@@ -26,7 +26,7 @@
 .cinema.film-mode.ready .cinema-enter{box-shadow:0 8px 28px rgba(49,202,121,.12),inset 0 1px 0 rgba(255,255,255,.28)}
 @media(max-aspect-ratio:1/1){#introFilm{object-fit:cover;object-position:50% 48%}.cinema.film-mode.ready .welcome-ui{bottom:max(28px,env(safe-area-inset-bottom));padding:15px 16px 17px}.cinema.film-mode.ready .brand-tag{font-size:7.5px;letter-spacing:.15em}}
 
-/* SAMI 2.7.0 — retained deterministic silent identity loader + replay-safe controls */
+/* SAMI 2.7.1 — retained deterministic silent identity loader + replay-safe controls */
 #launchStartGate{display:none!important}
 #wordmarkStage{top:43%;width:min(610px,72vw);background:transparent!important}
 .cinema-brand::before{content:none!important}
@@ -36,7 +36,7 @@
 #finalWordmark,.cinema-brand,#wordmarkStage{background-image:none!important}
 
 
-/* SAMI 2.7.0 — intro-preserving welcome gate + matched Why SAMI cinematic */
+/* SAMI 2.7.1 — intro-preserving welcome gate + matched Why SAMI cinematic */
 .brand-tag{
   display:flex;align-items:center;justify-content:center;gap:clamp(8px,1.5vw,15px);
   flex-wrap:wrap;white-space:normal;
@@ -86,17 +86,20 @@
   .cinema.ready .brand-tag span,.cinema.ready .brand-tag i{animation:none!important;opacity:1!important;transform:none!important}
 }
 
-/* SAMI 2.7.0 — deterministic browser intro surface */
+/* SAMI 2.7.1 — deterministic browser intro surface */
 html.intro-running,html.intro-running body{background:#020405!important}
 #samiLaunch:not(.film-mode) #samiCinema{opacity:1!important;background:#020405!important}
 #samiLaunch{background:#020405!important}
 
-/* SAMI 2.7.0 — browser-safe first paint + SAMI letter morph */
+/* SAMI 2.7.1 — browser-safe first paint + SAMI letter morph */
 html.intro-running,html.intro-running body,#samiLaunch{background:#020405!important;color-scheme:dark}
 #samiCinema{background:#020405!important;transform:translateZ(0)}
 .cinema-sentence .charged{color:#e3ffed!important;text-shadow:0 0 8px rgba(255,255,255,.72),0 0 24px rgba(70,255,148,.92),0 0 52px rgba(38,255,129,.46);font-weight:560}
-/* SAMI 2.7.0 — disconnected-information act uses neutral/conflict tones; green is reserved for the SAMI reveal */
+/* SAMI 2.7.1 — disconnected-information act uses neutral/conflict tones; green is reserved for the SAMI reveal */
 .process-word{color:#d6d9d5;text-shadow:0 3px 28px #000,0 0 18px rgba(255,255,255,.025)}
 .process-word:nth-child(4n+2){color:#c9b38b}
 .process-word:nth-child(5n+3){color:#c39b94}
 .process-data{color:#818a86;text-shadow:0 0 10px rgba(207,216,211,.04)}
+
+/* v2.7.1 promo completion: after watching Why SAMI, only the workspace action returns. */
+.cinema.promo-complete #whySami{display:none!important}

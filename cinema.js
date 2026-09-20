@@ -1,9 +1,9 @@
 (()=>{
 'use strict';
 const $=s=>document.querySelector(s),root=$('#samiLaunch'),canvas=$('#samiCinema'),film=$('#introFilm'),ctx=canvas?.getContext('2d',{alpha:false}),gate=$('#launchStartGate'),brand=$('#brandResolve'),logo=$('#finalWordmark'),wordmarkStage=$('#wordmarkStage'),welcomeUI=$('.welcome-ui'),words=$('#pitchWords'),sentence=$('#pitchLine'),status=$('#audioStatus');
-const welcomeAudio=$('#welcomeAudio'),salesAudio=$('#salesAudio'),salesVoice=$('#salesVoice');
-const NARRATION=['https://www.aidocmaker.com/g0/audio?name=44a2ca403f624d8ba1787a51fa47c06e'];
-let narrationIndex=0,narrationActive=false,narrationTimer=0;
+const welcomeAudio=$('#welcomeAudio'),salesAudio=$('#salesAudio');
+const isInstalled=()=>matchMedia?.('(display-mode: standalone)')?.matches||navigator.standalone===true;
+if(!isInstalled())document.documentElement.classList.add('install-required');
 const PROCESS=['SITE VISITS','PHOTOGRAPHS','NOTES','SERVICE INFORMATION','UTILITY PLANS','MEASUREMENTS','VERIFICATION','COMMUNICATION','DRAFTING','CAD','REVIEW','AMENDMENTS','RE-REVIEW','APPROVAL','PROJECT CHANGES','UPDATES','TIME','COST','TRAVEL','DUPLICATION','ENVIRONMENTAL IMPACT','VERSION CONTROL','ACCESS CONSTRAINTS','GROUND CONDITIONS','OVERHEAD LINES','UNDERGROUND SERVICES','TRAFFIC MANAGEMENT','ASSUMPTIONS','HANDOFFS','REWORK','DISCONNECTED FILES'];
 const STRUCTURES=[
 {x:-12,z:7,w:4.6,d:3.2,h:2.9,delay:0},{x:-5.5,z:10,w:3.1,d:4.1,h:4.4,delay:.08},
@@ -71,18 +71,25 @@ function prepareGeometry(){
 }
 function camAt(t){
  if(mode==='welcome'){const glide=clamp(t/5.9),p=ease(glide);return camera([lerp(.6,8.6,p),lerp(1.55,8.8,p),lerp(4.9,16.2,p)],[0,lerp(-.10,.16,p),0],lerp(44,48,p))}
- // Promo act one: move through disconnected information rather than green fractures.
- if(t<18.9){const p=ease(t/18.9),a=lerp(-1.18,.72,p),r=lerp(8.4,14.5,p),y=lerp(1.05,5.8,p);return camera([Math.cos(a)*r,y,Math.sin(a)*r],[lerp(-2.0,0,p),lerp(-.24,-.12,p),lerp(5.5,0,p)],lerp(57,48,p))}
- if(t<22.9){const p=ease((t-18.9)/4);return camera([lerp(10.8,5.6,p),lerp(6.1,2.1,p),lerp(10.4,6.2,p)],[0,-.18,0],lerp(48,50,p))}
- // SAMI act: a drone lifts from near ground, orbits a complete 360 degrees and reveals the full site intelligence field.
- if(t<39.3){const p=ease((t-22.9)/16.4),angle=-Math.PI*.58+Math.PI*2*p,r=lerp(6.2,39,p),y=lerp(1.45,30.5,p);return camera([Math.cos(angle)*r,y,Math.sin(angle)*r],[0,lerp(-.22,.12,p),0],lerp(53,49,p))}
- // Fly back toward the energy origin as the drawing retracts.
- if(t<42.45){const p=ease((t-39.3)/3.15),angle=Math.PI*1.42+Math.PI*.46*p,r=lerp(39,9.5,p),y=lerp(30.5,7.0,p);return camera([Math.cos(angle)*r,y,Math.sin(angle)*r],[0,lerp(.12,.02,p),0],lerp(49,45.5,p))}
- const p=ease((t-42.45)/1.55);return camera([lerp(-2.8,0,p),lerp(7,5.4,p),lerp(9.1,12.8,p)],[0,lerp(.02,.74,p),0],lerp(45.5,49,p))
+ // Voice-synchronised fragmented-information act: orbit through scattered sources with no green network.
+ if(t<32.25){const p=ease(t/32.25),a=lerp(-1.32,.94,p),r=lerp(7.8,18.6,p),y=lerp(.9,7.2,p);return camera([Math.cos(a)*r,y,Math.sin(a)*r],[lerp(-2.6,.25,p),lerp(-.25,-.12,p),lerp(6.4,.1,p)],lerp(59,47.5,p))}
+ // Failure / reset: pull tightly toward the point before blackout.
+ if(t<35.05){const p=ease((t-32.25)/2.8);return camera([lerp(10.8,5.5,p),lerp(7.2,2.1,p),lerp(11.7,6.0,p)],[0,-.18,0],lerp(47.5,50,p))}
+ // Clean SAMI act: drone takes off from close to ground and makes one complete orbit while aimed at centre.
+ if(t<44.75){const p=ease((t-35.05)/9.70),angle=-Math.PI*.64+Math.PI*2*p,r=lerp(5.8,43.5,p),y=lerp(1.25,33.8,p);return camera([Math.cos(angle)*r,y,Math.sin(angle)*r],[0,lerp(-.23,.13,p),0],lerp(55,48.3,p))}
+ // Huge wide hero view: let the fully-built map breathe.
+ if(t<47.45){const p=ease((t-44.75)/2.70),angle=Math.PI*1.36+Math.PI*.20*p,r=lerp(43.5,49.5,p),y=lerp(33.8,38.0,p);return camera([Math.cos(angle)*r,y,Math.sin(angle)*r],[0,.13,0],lerp(48.3,50,p))}
+ // Move back toward the origin while every CAD line retracts before the closing copy begins.
+ if(t<50.25){const p=ease((t-47.45)/2.80),angle=Math.PI*1.56+Math.PI*.31*p,r=lerp(49.5,10.0,p),y=lerp(38.0,7.0,p);return camera([Math.cos(angle)*r,y,Math.sin(angle)*r],[0,lerp(.13,.02,p),0],lerp(50,45.5,p))}
+ // Hold a calm close perspective for “work smarter” and the spoken closing line.
+ if(t<57.55){const p=ease((t-50.25)/7.30);return camera([lerp(-2.5,0,p),lerp(7.0,5.4,p),lerp(9.0,12.8,p)],[0,lerp(.02,.74,p),0],lerp(45.5,49,p))}
+ // One final fast 360 signature orbit after the electrical logo surge.
+ if(t<59.45){const p=ease((t-57.55)/1.90),angle=-Math.PI*.35+Math.PI*2*p,r=lerp(12.5,18.2,p),y=lerp(5.2,10.2,p);return camera([Math.cos(angle)*r,y,Math.sin(angle)*r],[0,.15,0],lerp(49,52,p))}
+ return camera([0,5.4,12.8],[0,.74,0],49)
 }
 function drawGround(cam,t){
  ctx.fillStyle='#020405';ctx.fillRect(0,0,w,h);
- const clean=mode!=='sales'||t>22.15,span=mode==='sales'&&t>22.2?58:30,zNear=mode==='sales'&&t>22.2?-56:-30,zFar=mode==='sales'&&t>22.2?48:22;
+ const clean=mode!=='sales'||t>34.75,span=mode==='sales'&&t>34.75?58:30,zNear=mode==='sales'&&t>34.75?-56:-30,zFar=mode==='sales'&&t>34.75?48:22;
  const poly=[[-span,-.32,zNear],[span,-.32,zNear],[span,-.32,zFar],[-span,-.32,zFar]].map(p=>project(cam,p)).filter(Boolean);
  if(poly.length===4){const g=ctx.createLinearGradient(0,Math.min(...poly.map(p=>p.y)),0,h);if(clean){g.addColorStop(0,'#07120f');g.addColorStop(.36,'#0b1213');g.addColorStop(.75,'#06100d');g.addColorStop(1,'#020607')}else{g.addColorStop(0,'#090d0e');g.addColorStop(.42,'#0b0f10');g.addColorStop(.78,'#06090a');g.addColorStop(1,'#020405')}ctx.fillStyle=g;path(poly);ctx.fill()}
  ctx.save();ctx.globalAlpha=clean?.038:.022;ctx.strokeStyle=clean?'#7ee8ac':'#7b8783';ctx.lineWidth=.7;for(let z=zNear+4;z<=zFar;z+=clean?5:4){const a=project(cam,[-span,-.305,z]),b=project(cam,[span,-.305,z]);if(a&&b){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}}ctx.restore();
@@ -92,8 +99,8 @@ function circleProjected(cam,r,y=-.29,n=72){const ps=[];for(let i=0;i<=n;i++){co
 function roughCircleProjected(cam,r,y=-.29,phase=0,n=52){const ps=[];for(let i=0;i<=n;i++){const a=i/n*Math.PI*2,noise=1+.09*Math.sin(a*7+phase)+.045*Math.sin(a*13-phase*1.7),rr=r*noise,p=project(cam,[Math.cos(a)*rr,y,Math.sin(a)*rr]);if(p)ps.push(p)}return ps}
 function drawCrater(cam,t,energy){if(mode==='sales')return;const impact=2.78;if(t<impact-.03)return;const active=t>=impact,build=active?smooth((t-impact)/.48):0,rr=lerp(.08,.70,build),c=roughCircleProjected(cam,rr,ENERGY_Y,.8);if(c.length>2){ctx.save();ctx.fillStyle=active?'#000101':'#050a08';path(c);ctx.fill();const inner=roughCircleProjected(cam,rr*.72,ENERGY_Y,2.1);if(inner.length>2){ctx.fillStyle='#000';path(inner);ctx.fill()}for(let pass=0;pass<3;pass++){ctx.strokeStyle=pass===0?`rgba(44,255,135,${.045*energy})`:pass===1?`rgba(66,240,144,${.15*energy})`:`rgba(172,255,207,${.32*energy})`;ctx.lineWidth=pass===0?13:pass===1?4:1;ctx.shadowColor='#37ff8b';ctx.shadowBlur=pass===0?24:pass===1?9:0;path(c);ctx.stroke()}ctx.shadowBlur=0;ctx.strokeStyle=`rgba(165,255,204,${.12*energy})`;ctx.lineWidth=.7;for(const phase of [1.4,2.7]){const rim=roughCircleProjected(cam,rr*(1.06+phase*.012),ENERGY_Y,phase);path(rim);ctx.stroke()}ctx.restore();}}
 function drawFragments(cam,t){
- if(mode!=='sales'||t<.35||t>20.05)return;
- const build=smooth((t-.35)/4.2),density=smooth((t-4.2)/11.4),collapse=smooth((t-17.25)/2.35);
+ if(mode!=='sales'||t<.35||t>33.15)return;
+ const build=smooth((t-.35)/4.2),density=smooth((t-4.2)/11.4),collapse=smooth((t-31.15)/1.95);
  ctx.save();
  for(const f of fragments){
   const born=smooth((t-(.35+f.delay*.52))/.78);if(born<=0)continue;
@@ -131,8 +138,8 @@ function drawFragments(cam,t){
  ctx.restore();
 }
 function drawDisconnectedLinks(cam,t){
- if(mode!=='sales'||t<2.2||t>19.7||fragments.length<8)return;
- const density=smooth((t-3.0)/10.5),collapse=smooth((t-17.35)/2.1),fade=(1-collapse)*density;
+ if(mode!=='sales'||t<2.2||t>32.95||fragments.length<8)return;
+ const density=smooth((t-3.0)/10.5),collapse=smooth((t-31.25)/1.85),fade=(1-collapse)*density;
  if(fade<=0)return;ctx.save();ctx.lineCap='round';
  const pairs=[[0,5],[3,11],[7,14],[9,21],[2,18],[12,27],[6,30],[15,24],[4,19],[1,28],[10,31]];
  pairs.forEach(([ia,ib],idx)=>{const A=fragments[ia],B=fragments[ib],pa=project(cam,[A.x,ENERGY_Y+A.lift*.28,A.z]),pb=project(cam,[B.x,ENERGY_Y+B.lift*.28,B.z]);if(!pa||!pb)return;const phase=(Math.sin(t*8.5+idx*2.1)+1)/2,cut=.38+.28*phase,ex=lerp(pa.x,pb.x,cut),ey=lerp(pa.y,pb.y,cut);ctx.setLineDash(idx%3===0?[6,9]:[2,7]);ctx.lineDashOffset=-t*(18+idx%4*5);ctx.strokeStyle=idx%4===0?`rgba(183,104,89,${.22*fade})`:idx%4===1?`rgba(191,151,88,${.2*fade})`:`rgba(128,145,151,${.16*fade})`;ctx.lineWidth=.75;ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(ex,ey);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=`rgba(220,229,224,${.28*fade})`;ctx.beginPath();ctx.arc(ex,ey,1.5+phase*1.4,0,Math.PI*2);ctx.fill()});
@@ -195,10 +202,15 @@ function drawBlocks(cam,t){
 function drawImpactDebris(cam,t){return}
 function cadProgress(t){
  if(mode==='welcome'){if(t<.75)return 0;if(t<3.15)return smooth((t-.75)/2.4);if(t<3.78)return 1;if(t<4.88)return 1-smooth((t-3.78)/1.1);return 0}
- if(t<22.9)return 0;if(t<35.9)return ease((t-22.9)/13);if(t<39.3)return 1;if(t<42.25)return 1-smooth((t-39.3)/2.95);return 0
+ // Voice-synchronised clean act: grow, hold the wide hero map, then fully retract before “work smarter”.
+ if(t<35.15)return 0;
+ if(t<43.55)return ease((t-35.15)/8.40);
+ if(t<47.05)return 1;
+ if(t<50.20)return 1-smooth((t-47.05)/3.15);
+ return 0
 }
 function drawCad(cam,t){
- const p=cadProgress(t);if(p<=0)return;const welcome=mode==='welcome',network=welcome?cad:promoCad,retract=(welcome&&t>=3.78)||(!welcome&&t>=39.3),active=network.length*p;
+ const p=cadProgress(t);if(p<=0)return;const welcome=mode==='welcome',network=welcome?cad:promoCad,retract=(welcome&&t>=3.78)||(!welcome&&t>=47.05),active=network.length*p;
  for(let i=0;i<network.length;i++){
   const order=retract?(network.length-1-i):i,local=clamp(active-order);if(local<=0)continue;
   const c=network[i],ps=partialPolyline(cam,c.pts,Math.max(.001,local));if(ps.length<2)continue;
@@ -209,14 +221,14 @@ function drawCad(cam,t){
  }
 }
 function flash(t){
- const xs=mode==='welcome'?[4.98,5.24]:[19.72,20.00,42.10];let a=0;
- for(const x of xs){const d=Math.abs(t-x);if(d<.2)a=Math.max(a,(1-d/.2)*(x<20.2?.58:.3))}
+ const xs=mode==='welcome'?[4.98,5.24]:[32.35,32.62,57.32,57.68];let a=0;
+ for(const x of xs){const d=Math.abs(t-x);if(d<.2)a=Math.max(a,(1-d/.2)*(mode==='welcome'||x<33?.58:.34))}
  if(a){ctx.fillStyle=`rgba(203,255,224,${a})`;ctx.fillRect(0,0,w,h)}
 }
 function drawPulse(cam,t){
  const center=project(cam,ENERGY_ORIGIN);if(!center)return;let energy=0;
  if(mode==='welcome')energy=t<.12?0:t<.75?.52*smooth((t-.12)/.63):t<4.75?.32+.24*Math.sin(t*8.8)**2:.52*(1-smooth((t-4.75)/.46));
- else if(t>22.35&&t<42.25)energy=(.24+.30*Math.sin(t*5.5)**2)*smooth((t-22.35)/1.05)*(1-smooth((t-41.75)/.50));
+ else if(t>34.65&&t<57.95)energy=(.24+.30*Math.sin(t*5.5)**2)*smooth((t-34.65)/1.05)*(1-smooth((t-57.35)/.60));
  if(energy<=0)return;const r=95+energy*170,g=ctx.createRadialGradient(center.x,center.y,0,center.x,center.y,r);
  g.addColorStop(0,`rgba(54,255,140,${.13*energy})`);g.addColorStop(.26,`rgba(40,232,124,${.09*energy})`);g.addColorStop(.58,`rgba(30,200,110,${.035*energy})`);g.addColorStop(1,'rgba(30,200,110,0)');
  ctx.fillStyle=g;ctx.fillRect(center.x-r,center.y-r,r*2,r*2)
@@ -224,17 +236,17 @@ function drawPulse(cam,t){
 function drawEnergyCore(cam,t){
  const c=project(cam,ENERGY_ORIGIN);if(!c)return;let a=0;
  if(mode==='welcome'){if(t>.12&&t<5.18)a=smooth((t-.12)/.45)*(1-smooth((t-4.82)/.36))}
- else if(t>22.3&&t<42.25)a=.88*smooth((t-22.3)/.72)*(1-smooth((t-41.7)/.55));
+ else if(t>34.62&&t<58.0)a=.88*smooth((t-34.62)/.72)*(1-smooth((t-57.35)/.65));
  if(a<=.01)return;const pulse=.76+.24*Math.sin(t*7.5)**2,r=lerp(12,25,pulse);
  ctx.save();const g=ctx.createRadialGradient(c.x,c.y,0,c.x,c.y,r);g.addColorStop(0,`rgba(245,255,249,${.96*a})`);g.addColorStop(.16,`rgba(151,255,198,${.88*a})`);g.addColorStop(.44,`rgba(54,255,139,${.44*a})`);g.addColorStop(1,'rgba(45,255,137,0)');
  ctx.fillStyle=g;ctx.beginPath();ctx.arc(c.x,c.y,r,0,Math.PI*2);ctx.fill();ctx.strokeStyle=`rgba(177,255,211,${.28*a})`;ctx.lineWidth=.8;ctx.beginPath();ctx.arc(c.x,c.y,lerp(6,10,pulse),0,Math.PI*2);ctx.stroke();ctx.restore()
 }
 function drawFinalPulse(cam,t){
- const c=project(cam,ENERGY_ORIGIN);if(!c)return;const moments=mode==='welcome'?[4.82,5.05]:[42.05,42.30];
+ const c=project(cam,ENERGY_ORIGIN);if(!c)return;const moments=mode==='welcome'?[4.82,5.05]:[57.30,57.68];
  for(const at of moments){const age=t-at;if(age<0||age>.34)continue;const p=smooth(age/.34),a=(1-p)*.9,len=lerp(16,Math.min(w*.46,430),p);const g=ctx.createLinearGradient(c.x-len,c.y,c.x+len,c.y);g.addColorStop(0,'rgba(80,255,158,0)');g.addColorStop(.42,`rgba(105,255,178,${a*.48})`);g.addColorStop(.5,`rgba(238,255,246,${a})`);g.addColorStop(.58,`rgba(105,255,178,${a*.48})`);g.addColorStop(1,'rgba(80,255,158,0)');ctx.save();ctx.strokeStyle=g;ctx.lineWidth=lerp(5.5,.8,p);ctx.shadowColor='#5cff9f';ctx.shadowBlur=20*(1-p);ctx.beginPath();ctx.moveTo(c.x-len,c.y);ctx.lineTo(c.x+len,c.y);ctx.stroke();ctx.restore()}
 }
 function drawIgnitionLine(cam,t){
- if(mode!=='sales')return;const age=t-22.45;if(age<0||age>.92)return;const c=project(cam,ENERGY_ORIGIN);if(!c)return;
+ if(mode!=='sales')return;const age=t-34.72;if(age<0||age>.92)return;const c=project(cam,ENERGY_ORIGIN);if(!c)return;
  const p=smooth(age/.88),a=(1-smooth((age-.56)/.32))*.95,len=lerp(Math.min(h*.22,120),Math.min(h*.84,430),p);
  ctx.save();
  const g=ctx.createLinearGradient(c.x,c.y-len,c.x,c.y+len);
@@ -246,9 +258,9 @@ function drawIgnitionLine(cam,t){
  ctx.restore();
 }
 function processWords(t){
- if(mode!=='sales')return;const rel=t-1.3,collapse=smooth((t-17.8)/2.1);
+ if(mode!=='sales')return;const rel=t-1.3,collapse=smooth((t-31.55)/1.45);
  [...words.querySelectorAll('.process-word')].forEach(el=>{const at=+el.dataset.start,d=+el.dataset.duration,p=rel-at,arrive=smooth(p/.34),foreground=1-smooth((p-d)/.48),settled=.16*smooth((p-d+.25)/.7),o=arrive*Math.max(foreground,settled)*(1-collapse);el.style.opacity=String(Math.max(0,o));const drift=lerp(14,-12,clamp(p/(d+1.2))),scale=foreground>.4?lerp(.96,1.04,clamp(p/d)):lerp(.9,.72,clamp((p-d)/3));el.style.transform=`translate(-50%,calc(-50% + ${drift}px)) scale(${scale})`;el.style.filter=`blur(${foreground>.3?0:Math.min(1.2,Math.max(0,p-d)*.22)}px)`});
- [...words.querySelectorAll('.process-data')].forEach((el,i)=>{const born=4.7+(i%70)*.16+Math.floor(i/70)*.35,p=t-born,density=clamp((t-7.5)/9.6),o=smooth(p/.8)*(.018+.15*density)*(1-collapse);el.style.opacity=String(Math.max(0,o));el.style.transform=`translateY(${((t*8+i*3)%90)-45}px) scale(${.78+.18*((i%5)/4)})`})
+ [...words.querySelectorAll('.process-data')].forEach((el,i)=>{const born=4.7+(i%70)*.23+Math.floor(i/70)*.5,p=t-born,density=clamp((t-9.0)/20.0),o=smooth(p/.8)*(.018+.15*density)*(1-collapse);el.style.opacity=String(Math.max(0,o));el.style.transform=`translateY(${((t*8+i*3)%90)-45}px) scale(${.78+.18*((i%5)/4)})`})
 }
 function prepareWords(){
  words.replaceChildren();let at=0;PROCESS.forEach((text,i)=>{const el=document.createElement('div');el.className='process-word';el.textContent=text;el.style.setProperty('--x',(11+(i*29)%78)+'%');el.style.setProperty('--y',(16+(i*19)%66)+'%');el.dataset.start=at;el.dataset.duration=.95+(i%4)*.18;at+=.43+(i%3)*.08;words.append(el)});
@@ -256,36 +268,53 @@ function prepareWords(){
 }
 function setSentence(text,opacity){if(sentence.dataset.text!==text){sentence.innerHTML='';sentence.textContent=text;sentence.dataset.text=text}sentence.style.opacity=String(opacity)}
 function propositions(t){
- if(mode!=='sales')return;if(t<20.7){setSentence('',0);return}
- if(t>=38.75)return;
- const items=[[20.75,23.0,'WHAT IF THERE WAS A BETTER WAY?'],[23.2,25.0,'ONE SOURCE OF INFORMATION'],[25.05,26.8,'ONE CONNECTED PROJECT'],[26.85,28.35,'ONE WORKSPACE'],[28.4,31.1,'SERVICES · CONSTRAINTS · ACCESS · MEASUREMENTS · DESIGN'],[31.15,33.7,'DEFINE THE SITE ONCE. DRAW IT TO SCALE.'],[33.75,35.65,'LESS DUPLICATION. FEWER ASSUMPTIONS.'],[35.7,37.2,'CLEARER DECISIONS.'],[37.25,38.7,'IT’S TIME TO WORK SMARTER']];
- const x=items.find(([a,b])=>t>=a&&t<b);if(x){const[a,b,text]=x;setSentence(text,smooth((t-a)/.35)*(1-smooth((t-b+.32)/.32)))}else setSentence('',0)
+ if(mode!=='sales')return;
+ if(t<33.55){setSentence('',0);return}
+ if(t>=52.85)return;
+ const items=[
+  [33.65,35.20,'WHAT IF THERE WAS A BETTER WAY?'],
+  [35.45,37.10,'ONE SOURCE OF INFORMATION'],
+  [37.20,38.70,'ONE CONNECTED PROJECT'],
+  [38.80,40.15,'ONE WORKSPACE'],
+  [40.25,42.15,'SERVICES · CONSTRAINTS · ACCESS · MEASUREMENTS · DESIGN'],
+  [42.25,44.10,'DEFINE THE SITE ONCE. DRAW IT TO SCALE.'],
+  [44.20,46.10,'LESS DUPLICATION. FEWER ASSUMPTIONS.'],
+  [46.20,48.15,'CLEARER DECISIONS.'],
+  [50.65,52.65,'IT’S TIME TO WORK SMARTER']
+ ];
+ const x=items.find(([a,b])=>t>=a&&t<b);if(x){const[a,b,text]=x;setSentence(text,smooth((t-a)/.30)*(1-smooth((t-b+.27)/.27)))}else setSentence('',0)
 }
 function letterMorph(t){
- if(mode!=='sales'||t<38.75)return;
- const phrase='IT’S TIME TO ASK SAMI', selected=[3,13,19,20],centres=[.153,.413,.724,.942];
+ if(mode!=='sales'||t<52.90)return;
+ const selectedPhrase='…ASK SAMI',selected=[5,6,7,8],centres=[.153,.413,.724,.942];
+ // Match the user's voice-over exactly: “It's time to…” / deliberate pause / “…ask SAMI”.
+ if(t<54.18){
+  if(sentence.dataset.text!=='__time_pause__'){sentence.innerHTML=[...'IT’S TIME TO…'].map(c=>`<span>${c===' '?'&nbsp;':c}</span>`).join('');sentence.dataset.text='__time_pause__';}
+  const show=smooth((t-52.90)/.28)*(1-smooth((t-54.08)/.20));sentence.style.opacity=String(show);return;
+ }
+ if(t<54.72){sentence.style.opacity='0';return}
  if(sentence.dataset.text!=='__sami_morph__'){
-  sentence.innerHTML=[...phrase].map((c,i)=>`<span data-index="${i}">${c===' '?'&nbsp;':c}</span>`).join('');sentence.dataset.text='__sami_morph__';sentence.style.opacity='1';
+  sentence.innerHTML=[...selectedPhrase].map((c,i)=>`<span data-index="${i}">${c===' '?'&nbsp;':c}</span>`).join('');sentence.dataset.text='__sami_morph__';sentence.style.opacity='1';
  }
  const spans=[...sentence.querySelectorAll('span')],stage=wordmarkStage.getBoundingClientRect();
- const arrive=smooth((t-38.75)/.42),charge=smooth((t-39.15)/.55),move=ease((t-39.8)/1.35),morph=smooth((t-41.05)/1.0);
+ const arrive=smooth((t-54.72)/.24),charge=smooth((t-55.00)/.30),move=ease((t-55.20)/1.15),morph=smooth((t-56.22)/.72);
  sentence.style.opacity=String(arrive*(1-.08*morph));
  spans.forEach((el,i)=>{
   const n=selected.indexOf(i);if(!el.dataset.x){const b=el.getBoundingClientRect();el.dataset.x=b.left+b.width/2;el.dataset.y=b.top+b.height/2}
-  if(n<0){el.style.opacity=String(1-smooth((t-39.55)/.7));el.style.filter='none';return}
+  if(n<0){el.style.opacity=String(1-smooth((t-55.05)/.50));el.style.filter='none';return}
   el.classList.add('charged');
   const tx=stage.left+stage.width*centres[n],ty=stage.top+stage.height*.51,dx=(tx-+el.dataset.x)*move,dy=(ty-+el.dataset.y)*move;
-  el.style.opacity=String(1-morph*.96);el.style.transform=`translate(${dx}px,${dy}px) scale(${lerp(1,.84,move)})`;el.style.filter=`brightness(${1+charge*.65})`;
+  el.style.opacity=String(1-morph*.98);el.style.transform=`translate(${dx}px,${dy}px) scale(${lerp(1,.84,move)})`;el.style.filter=`brightness(${1+charge*.86})`;
  });
 }
 function brandProgress(t){
- const base=mode==='welcome'?5.08:41.45,p=smooth((t-base)/(mode==='welcome'?.54:.72));logo.style.opacity=String(p);logo.style.transform=`translateY(${lerp(8,0,p)}px) scale(${lerp(.985,1,p)})`;
- const svg=$('.logo-edge-pass'),q=clamp((t-base-(mode==='welcome'?.10:.06))/(mode==='welcome'?.78:1.05));svg.style.opacity=q>0&&q<1?'1':'0';svg.querySelectorAll('path').forEach(p=>p.style.strokeDashoffset=String(5-q*105));
+ const base=mode==='welcome'?5.08:56.38,p=smooth((t-base)/(mode==='welcome'?.54:.72));logo.style.opacity=String(p);logo.style.transform=`translateY(${lerp(8,0,p)}px) scale(${lerp(.985,1,p)})`;
+ const svg=$('.logo-edge-pass'),q=clamp((t-base-(mode==='welcome'?.10:.05))/(mode==='welcome'?.78:.92));svg.style.opacity=q>0&&q<1?'1':'0';svg.querySelectorAll('path').forEach(p=>p.style.strokeDashoffset=String(5-q*105));
  if(mode==='welcome'){welcomeUI.style.opacity='0';if(t>5.86)completeQuickLaunch();return}
- const ready=smooth((t-base-1.35)/.72);welcomeUI.style.opacity=String(ready);root.classList.toggle('ready',ready>.95)
+ const ready=smooth((t-59.45)/.48);welcomeUI.style.opacity=String(ready);root.classList.toggle('ready',ready>.92)
 }
 function drawStructures(cam,t){
- if(mode!=='sales'||t<27||t>42.15)return;const master=smooth((t-27)/7.2)*(1-smooth((t-39.35)/2.2));if(master<=0)return;
+ if(mode!=='sales'||t<38.2||t>50.0)return;const master=smooth((t-38.2)/5.4)*(1-smooth((t-47.35)/2.55));if(master<=0)return;
  ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
  STRUCTURES.forEach((s,i)=>{const q=clamp((master-s.delay)/(1-s.delay));if(q<=0)return;const scale=1.42,y0=ENERGY_Y,y1=ENERGY_Y+s.h*1.18*smooth(q),cx=s.x*scale,cz=s.z*scale,x0=cx-s.w*.62,x1=cx+s.w*.62,z0=cz-s.d*.62,z1=cz+s.d*.62;
   const bottom=[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1],[x0,y0,z0]].map(p=>project(cam,p)).filter(Boolean),top=[[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1],[x0,y1,z0]].map(p=>project(cam,p)).filter(Boolean);
@@ -294,45 +323,59 @@ function drawStructures(cam,t){
  });ctx.restore()
 }
 function drawBlackout(t){
- if(mode!=='sales')return;let a=0;if(t>=19.55&&t<20.08)a=smooth((t-19.55)/.53);else if(t>=20.08&&t<21.95)a=1;else if(t>=21.95&&t<22.75)a=1-smooth((t-21.95)/.8);if(a>0){ctx.fillStyle=`rgba(0,0,0,${a})`;ctx.fillRect(0,0,w,h)}
+ if(mode!=='sales')return;let a=0;
+ // Fragmented workflow fails and cuts to black before the clean SAMI reveal.
+ if(t>=32.15&&t<32.65)a=smooth((t-32.15)/.50);
+ else if(t>=32.65&&t<33.35)a=1;
+ else if(t>=33.35&&t<35.05)a=1-smooth((t-33.35)/1.70);
+ // After the one-shot signature orbit, return to darkness for the final action UI.
+ else if(t>=59.18&&t<59.55)a=smooth((t-59.18)/.37)*.96;
+ else if(t>=59.55)a=.96*(1-smooth((t-59.62)/.36));
+ if(a>0){ctx.fillStyle=`rgba(0,0,0,${a})`;ctx.fillRect(0,0,w,h)}
+}
+function drawSignatureCad(cam,t){
+ if(mode!=='sales'||t<57.55||t>59.45)return;
+ const age=t-57.55,phase=age/1.90,p=phase<.46?smooth(phase/.46):1-smooth((phase-.46)/.54),network=promoCad,active=network.length*clamp(p);
+ for(let i=0;i<network.length;i++){
+  const order=phase<.46?i:(network.length-1-i),local=clamp(active-order);if(local<=0)continue;
+  const c=network[i],ps=partialPolyline(cam,c.pts,Math.max(.001,local));if(ps.length<2)continue;
+  ctx.save();ctx.lineJoin='round';ctx.lineCap='round';const surge=.5+.5*Math.sin(t*20-i*.7);ctx.strokeStyle=c.major?`rgba(142,255,191,${.48+.4*surge})`:`rgba(72,245,143,${.24+.42*surge})`;ctx.lineWidth=c.major?1.8:.75;ctx.shadowColor='#47ff96';ctx.shadowBlur=c.major?12:5;path(ps);ctx.stroke();ctx.restore();
+ }
 }
 function cameraFor(t){return camAt(t)}
 function frame(now){
- if(!running)return;const t=(now-start)/1000,cam=cameraFor(t);drawGround(cam,t);if(mode==='sales'){drawDisconnectedLinks(cam,t);drawFragments(cam,t);}drawCrater(cam,t,mode==='sales'?0:cadProgress(t));drawImpactDebris(cam,t);drawIgnitionLine(cam,t);drawCad(cam,t);drawStructures(cam,t);drawPulse(cam,t);drawEnergyCore(cam,t);drawFinalPulse(cam,t);flash(t);drawBlackout(t);processWords(t);propositions(t);letterMorph(t);brandProgress(t);
- if((mode==='welcome'&&t<6)||(mode==='sales'&&t<44.5))raf=requestAnimationFrame(frame);else if(mode==='welcome')completeQuickLaunch();else finishAtWelcome()
+ if(!running)return;const t=(now-start)/1000,cam=cameraFor(t);drawGround(cam,t);if(mode==='sales'){drawDisconnectedLinks(cam,t);drawFragments(cam,t);}drawCrater(cam,t,mode==='sales'?0:cadProgress(t));drawImpactDebris(cam,t);drawIgnitionLine(cam,t);drawCad(cam,t);drawStructures(cam,t);drawSignatureCad(cam,t);drawPulse(cam,t);drawEnergyCore(cam,t);drawFinalPulse(cam,t);flash(t);drawBlackout(t);processWords(t);propositions(t);letterMorph(t);brandProgress(t);
+ if((mode==='welcome'&&t<6)||(mode==='sales'&&t<60.05))raf=requestAnimationFrame(frame);else if(mode==='welcome')completeQuickLaunch();else finishAtWelcome()
 }
 function drawStill(){if(!ctx)return;const cam=camera([0,5.2,12.5],[0,.75,0],49);drawGround(cam,0)}
-function resetVisual(){cancelAnimationFrame(raf);running=false;try{film?.pause()}catch{}if(film){film.classList.remove('active','holding');film.style.opacity='0'}canvas.style.opacity='1';words.replaceChildren();sentence.innerHTML='';sentence.dataset.text='';sentence.style.opacity='0';logo.style.opacity='0';logo.style.transform='translateY(8px) scale(.985)';welcomeUI.style.opacity='0';$('.logo-edge-pass').style.opacity='0';root.classList.remove('ready','film-mode');$('#cinemaClosed').hidden=true}
-function stopNarration(reset=false){narrationActive=false;if(!salesVoice)return;try{salesVoice.pause();if(reset){narrationIndex=0;salesVoice.src=NARRATION[0];salesVoice.currentTime=0;salesVoice.load();}}catch{}}
-function startNarration(reset=true){if(!salesVoice||!sound)return;if(reset){narrationIndex=0;salesVoice.src=NARRATION[0];salesVoice.currentTime=0;}narrationActive=true;salesVoice.muted=false;salesVoice.volume=.98;const p=salesVoice.play();if(p?.catch)p.catch(()=>{narrationActive=false;status.textContent='Narration could not start. Tap Sound off, then Sound on to retry.';});}
-if(salesVoice){salesVoice.addEventListener('ended',()=>{narrationActive=false;});salesVoice.addEventListener('error',()=>{narrationActive=false;status.textContent='Narration could not load. The cinematic soundtrack will continue.';});}
-async function ensureIntroFilm(){if(!film)return'';if(filmUrl)return filmUrl;if(filmLoading)return filmLoading;filmLoading=fetch('sami-intro-cinematic-v230.mp3',{cache:'force-cache'}).then(r=>{if(!r.ok)throw new Error('intro film '+r.status);return r.arrayBuffer()}).then(buf=>{filmUrl=URL.createObjectURL(new Blob([buf],{type:'video/mp4'}));film.src=filmUrl;film.load();return filmUrl}).catch(err=>{filmLoading=null;throw err});return filmLoading;}
+function resetVisual(){cancelAnimationFrame(raf);running=false;try{film?.pause()}catch{}if(film){film.classList.remove('active','holding');film.style.opacity='0'}canvas.style.opacity='1';words.replaceChildren();sentence.innerHTML='';sentence.dataset.text='';sentence.style.opacity='0';logo.style.opacity='0';logo.style.transform='translateY(8px) scale(.985)';welcomeUI.style.opacity='0';$('.logo-edge-pass').style.opacity='0';root.classList.remove('ready','film-mode','promo-complete');$('#cinemaClosed').hidden=true}
 function stopAudio(){
- try{film?.pause()}catch{}for(const a of [welcomeAudio,salesAudio]){try{a.pause()}catch{}}try{salesVoice?.pause()}catch{}if(narrationTimer){clearTimeout(narrationTimer);narrationTimer=0}narrationActive=false
+ for(const a of [welcomeAudio,salesAudio]){try{a.pause()}catch{}}
 }
 function playAudio(which){
- if(which!=='sales')return;stopAudio();salesAudio.currentTime=0;salesAudio.muted=!sound;salesAudio.volume=.46;const bp=salesAudio.play();if(bp?.catch)bp.catch(()=>{if(sound)status.textContent='Cinematic music could not start.'});
- if(salesVoice){salesVoice.src=NARRATION[0];salesVoice.load();salesVoice.currentTime=0;salesVoice.muted=!sound;salesVoice.volume=1;if(sound)startNarration(false)}
- if(sound){status.textContent='Cinematic soundtrack and narration enabled'}
+ if(which!=='sales')return;stopAudio();salesAudio.currentTime=0;salesAudio.muted=!sound;salesAudio.volume=1;const bp=salesAudio.play();if(bp?.catch)bp.catch(()=>{if(sound)status.textContent='Cinematic soundtrack could not start. Tap Sound to retry.'});if(sound)status.textContent='Why SAMI narration and soundtrack enabled';
 }
 async function playWelcomeFilm(){sound=false;filmFallback=true;root.classList.remove('film-mode');if(film){film.classList.remove('active','holding');film.style.opacity='0'}canvas.style.opacity='1';drawStill();await new Promise(r=>requestAnimationFrame(()=>r()));start=performance.now();running=true;raf=requestAnimationFrame(frame)}
-async function play(which='welcome',options={}){prepareGeometry();resetVisual();mode=which;quickLaunchDone=false;welcomeExit=which==='welcome'?(options.after||'auto'):'menu';root.hidden=false;$('#app').inert=true;$('#app').setAttribute('aria-hidden','true');gate.classList.add('dismissed');if(which==='welcome'){const replaying=welcomeExit==='menu';$('#launchSkip').hidden=!replaying;$('#launchSoundBtn').hidden=true;if(replaying)$('#launchSkip').textContent='Back to workspace';await playWelcomeFilm();return}$('#launchSkip').hidden=false;$('#launchSoundBtn').hidden=false;$('#launchSkip').textContent='Back to welcome';start=performance.now();running=true;prepareWords();playAudio(which);raf=requestAnimationFrame(frame)}
+async function play(which='welcome',options={}){prepareGeometry();resetVisual();root.classList.remove('promo-complete');mode=which;quickLaunchDone=false;welcomeExit=which==='welcome'?(options.after||'auto'):'menu';root.hidden=false;$('#app').inert=true;$('#app').setAttribute('aria-hidden','true');gate.classList.add('dismissed');if(which==='welcome'){const replaying=welcomeExit==='menu';$('#launchSkip').hidden=!replaying;$('#launchSoundBtn').hidden=true;if(replaying)$('#launchSkip').textContent='Back to workspace';await playWelcomeFilm();return}$('#launchSkip').hidden=false;$('#launchSoundBtn').hidden=false;$('#launchSkip').textContent='Back to welcome';start=performance.now();running=true;prepareWords();playAudio(which);raf=requestAnimationFrame(frame)}
 
 let quickLaunchDone=false,welcomeExit='auto';
 async function completeQuickLaunch(){
  if(quickLaunchDone||mode!=='welcome')return;quickLaunchDone=true;cancelAnimationFrame(raf);running=false;logo.style.opacity='1';logo.style.transform='translateY(0) scale(1)';$('.logo-edge-pass').style.opacity='0';await new Promise(r=>setTimeout(r,120));
+ if(document.documentElement.classList.contains('install-required')){document.documentElement.classList.remove('intro-running');root.hidden=true;setupBrowserGate();return;}
  finishAtWelcome(false)
 }
 function finishAtWelcome(fromFilm=false){
- cancelAnimationFrame(raf);running=false;for(const a of [salesAudio,welcomeAudio]){try{a.pause()}catch{}}try{salesVoice?.pause()}catch{}narrationActive=false;words.replaceChildren();sentence.innerHTML='';sentence.style.opacity='0';
+ cancelAnimationFrame(raf);running=false;for(const a of [salesAudio,welcomeAudio]){try{a.pause()}catch{}}words.replaceChildren();sentence.innerHTML='';sentence.style.opacity='0';
+ if(mode==='sales'&&document.documentElement.classList.contains('install-required')){root.hidden=true;document.documentElement.classList.remove('intro-running');setupBrowserGate();return;}
  if(fromFilm&&film&&!filmFallback){try{film.pause()}catch{}film.classList.add('holding');film.style.opacity='1';canvas.style.opacity='0';logo.style.opacity='0';root.classList.add('film-mode')}
  else{try{film?.pause()}catch{}if(film){film.classList.remove('active','holding');film.style.opacity='0'}root.classList.remove('film-mode');canvas.style.opacity='1';logo.style.opacity='1';logo.style.transform='translateY(0) scale(1)';drawStill()}
- welcomeUI.style.opacity='1';$('.logo-edge-pass').style.opacity='0';root.classList.add('ready');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true
+ welcomeUI.style.opacity='1';$('.logo-edge-pass').style.opacity='0';root.classList.toggle('promo-complete',mode==='sales');root.classList.add('ready');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true
 }
-async function enter(){resetVisual();stopAudio();root.hidden=true;$('#app').inert=false;$('#app').setAttribute('aria-hidden','false');await window.SAMIWorkspace?.ready;if(localStorage.getItem('sami.tutorial.seen')!=='yes')window.SAMIWorkspace?.runAction('tutorial')}
+async function enter(){if(document.documentElement.classList.contains('install-required')){setupBrowserGate();return;}const permissionRun=window.SAMIWorkspace?.requestEntryPermissions?.();document.activeElement?.blur?.();resetVisual();stopAudio();root.hidden=true;$('#app').inert=false;$('#app').setAttribute('aria-hidden','false');await window.SAMIWorkspace?.ready;await permissionRun?.catch?.(()=>{});document.activeElement?.blur?.();if(localStorage.getItem('sami.tutorial.seen')!=='yes')window.SAMIWorkspace?.runAction('tutorial')}
 async function startWithSound(){sound=true;$('#launchSoundBtn').textContent='Sound on';status.textContent='Cinematic sound enabled';await play(location.hash==='#why'?'sales':'welcome',{after:'auto'})}
 async function shutdown(){resetVisual();root.hidden=false;$('#app').inert=true;$('#app').setAttribute('aria-hidden','true');gate.classList.add('dismissed');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true;logo.style.opacity='1';logo.style.transform='translateY(0) scale(1)';await logo.animate([{opacity:1,filter:'brightness(1)'},{opacity:.5,filter:'brightness(1.5)',offset:.38},{opacity:0,filter:'brightness(.25)'}],{duration:1800,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished.catch(()=>{});logo.style.opacity='0';$('#cinemaClosed').hidden=false}
-$('#startSound').onclick=startWithSound;$('#startQuiet').onclick=async()=>{sound=false;$('#launchSoundBtn').textContent='Sound off';await play(location.hash==='#why'?'sales':'welcome',{after:'auto'})};$('#launchSkip').onclick=()=>{if(mode==='welcome'&&welcomeExit==='menu')return enter();return root.classList.contains('ready')?enter():finishAtWelcome(false)};$('#launchSoundBtn').onclick=async()=>{sound=!sound;$('#launchSoundBtn').textContent=sound?'Sound on':'Sound off';if(mode==='welcome'&&film&&!filmFallback){film.muted=!sound;if(sound&&running&&film.paused)film.play().catch(()=>{});return}salesAudio.muted=!sound;if(salesVoice)salesVoice.muted=!sound;if(!sound){try{salesVoice?.pause()}catch{}narrationActive=false;}else{salesAudio.play().catch(()=>{});if(mode==='sales'&&salesVoice){if(!salesVoice.src||!salesVoice.src.includes('44a2ca403f624d8ba1787a51fa47c06e'))salesVoice.src=NARRATION[0];const elapsed=Math.max(0,(performance.now()-start)/1000-.5);try{if(Number.isFinite(salesVoice.duration)&&salesVoice.duration>0)salesVoice.currentTime=Math.min(elapsed,salesVoice.duration-.1)}catch{}narrationActive=true;salesVoice.play().catch(()=>{narrationActive=false;});}}};if(film){film.addEventListener('ended',()=>{if(mode==='welcome')finishAtWelcome(true)});film.addEventListener('error',()=>{if(mode==='welcome'&&!filmFallback){filmFallback=true;root.classList.remove('film-mode');film.style.opacity='0';canvas.style.opacity='1';start=performance.now();running=true;raf=requestAnimationFrame(frame)}})}$('#enterSami').onclick=enter;$('#whySami').onclick=()=>{sound=true;$('#launchSoundBtn').textContent='Sound on';play('sales');};$('#reopenSami').onclick=()=>{gate.classList.remove('dismissed');$('#cinemaClosed').hidden=true;logo.style.opacity='0';welcomeUI.style.opacity='0';if(film){film.classList.remove('active','holding');film.style.opacity='0'}root.classList.remove('film-mode');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true};
-window.SAMICinema={play,shutdown,enter};addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden&&running){suspendedAt=performance.now();cancelAnimationFrame(raf);if(mode==='welcome'&&film&&!filmFallback){try{film.pause()}catch{}}else stopAudio();}else if(suspendedAt&&running){const pausedFor=performance.now()-suspendedAt;suspendedAt=0;if(mode==='welcome'&&film&&!filmFallback){film.muted=!sound;film.play().catch(()=>{})}else{start+=pausedFor;const elapsed=(performance.now()-start)/1000;salesAudio.currentTime=Math.min(elapsed,Number.isFinite(salesAudio.duration)?salesAudio.duration:elapsed);salesAudio.play().catch(()=>{});if(mode==='sales'&&salesVoice&&sound){narrationActive=true;salesVoice.play().catch(()=>{narrationActive=false;})}raf=requestAnimationFrame(frame)}}});
-prepareGeometry();resize();sound=false;document.documentElement.classList.add('intro-running');root.hidden=false;$('#app').inert=true;$('#app').setAttribute('aria-hidden','true');gate.classList.add('dismissed');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true;requestAnimationFrame(()=>requestAnimationFrame(()=>play('welcome',{after:'auto'})));
+function setupBrowserGate(){const box=$('#mobileInstallGate'),btn=$('#gateInstallBtn'),copy=$('#gateInstallInstructions');if(!box)return;const ios=/iPad|iPhone|iPod/.test(navigator.userAgent);if(copy)copy.innerHTML=ios?'<p><strong>Install on iPhone / iPad</strong><br>Tap Share in Safari, then choose <b>Add to Home Screen</b>. Open SAMI from the new Home Screen icon.</p>':'<p><strong>Install SAMI</strong><br>Use the browser install button when available, or choose <b>Install app / Add to Home Screen</b> from your browser menu.</p>';if(btn){btn.hidden=false;btn.textContent=ios?'How to install SAMI':'Install SAMI';btn.onclick=async()=>{const prompt=window.__SAMI_INSTALL_PROMPT__;if(prompt){try{prompt.prompt();await prompt.userChoice;window.__SAMI_INSTALL_PROMPT__=null}catch{}}else if(copy){copy.classList.add('attention')}}}const why=$('#gateWhySami');if(why)why.onclick=()=>{document.documentElement.classList.add('intro-running');root.hidden=false;sound=true;play('sales')}}
+$('#startSound').onclick=startWithSound;$('#startQuiet').onclick=async()=>{sound=false;$('#launchSoundBtn').textContent='Sound off';await play(location.hash==='#why'?'sales':'welcome',{after:'auto'})};$('#launchSkip').onclick=()=>{if(mode==='welcome'&&welcomeExit==='menu')return enter();return root.classList.contains('ready')?enter():finishAtWelcome(false)};$('#launchSoundBtn').onclick=()=>{sound=!sound;$('#launchSoundBtn').textContent=sound?'Sound on':'Sound off';salesAudio.muted=!sound;if(sound){salesAudio.play().catch(()=>{})}else{salesAudio.pause()}};if(film){film.addEventListener('ended',()=>{if(mode==='welcome')finishAtWelcome(true)});film.addEventListener('error',()=>{if(mode==='welcome'&&!filmFallback){filmFallback=true;root.classList.remove('film-mode');film.style.opacity='0';canvas.style.opacity='1';start=performance.now();running=true;raf=requestAnimationFrame(frame)}})}$('#enterSami').onclick=enter;$('#whySami').onclick=()=>{sound=true;$('#launchSoundBtn').textContent='Sound on';play('sales');};$('#reopenSami').onclick=()=>{gate.classList.remove('dismissed');$('#cinemaClosed').hidden=true;logo.style.opacity='0';welcomeUI.style.opacity='0';if(film){film.classList.remove('active','holding');film.style.opacity='0'}root.classList.remove('film-mode');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true};
+window.SAMICinema={play,shutdown,enter};addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden&&running){suspendedAt=performance.now();cancelAnimationFrame(raf);if(mode==='welcome'&&film&&!filmFallback){try{film.pause()}catch{}}else stopAudio();}else if(suspendedAt&&running){const pausedFor=performance.now()-suspendedAt;suspendedAt=0;if(mode==='welcome'&&film&&!filmFallback){film.muted=!sound;film.play().catch(()=>{})}else{start+=pausedFor;const elapsed=(performance.now()-start)/1000;salesAudio.currentTime=Math.min(elapsed,Number.isFinite(salesAudio.duration)?salesAudio.duration:elapsed);salesAudio.play().catch(()=>{});raf=requestAnimationFrame(frame)}}});
+prepareGeometry();resize();setupBrowserGate();sound=false;document.documentElement.classList.add('intro-running');root.hidden=false;$('#app').inert=true;$('#app').setAttribute('aria-hidden','true');gate.classList.add('dismissed');$('#launchSkip').hidden=true;$('#launchSoundBtn').hidden=true;requestAnimationFrame(()=>requestAnimationFrame(()=>play('welcome',{after:'auto'})));
 })();
