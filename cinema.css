@@ -101,5 +101,8 @@ html.intro-running,html.intro-running body,#samiLaunch{background:#020405!import
 .process-word:nth-child(5n+3){color:#c39b94}
 .process-data{color:#818a86;text-shadow:0 0 10px rgba(207,216,211,.04)}
 
-/* v2.7.1 promo completion: after watching Why SAMI, only the workspace action returns. */
+/* v2.7.2 promo completion: after watching Why SAMI, only the workspace action returns. */
 .cinema.promo-complete #whySami{display:none!important}
+
+/* v2.7.2 — browser install help and promo servicing-glitch refinement */
+.install-help{margin-top:12px;padding:14px 14px 12px;border:1px solid rgba(127,217,168,.24);border-radius:12px;background:linear-gradient(180deg,rgba(19,31,26,.94),rgba(8,14,12,.96));box-shadow:0 18px 50px rgba(0,0,0,.34);text-align:left}.install-help[hidden]{display:none!important}.install-help-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}.install-help-head strong{font-size:13px;letter-spacing:.04em;color:#e6f6ed}.install-help-head button{width:32px!important;height:32px!important;min-height:32px!important;margin:0!important;padding:0!important;border:1px solid rgba(170,220,194,.22)!important;background:transparent!important;color:#d9eee3!important}.install-help ol{margin:0;padding-left:20px;color:#b8c9c0}.install-help li{margin:8px 0;line-height:1.45;font-size:11px}.install-help-note{margin:11px 0 0!important;padding-top:10px;border-top:1px solid rgba(145,188,164,.14);font-size:9px!important;color:#82988c!important}.install-gate-copy.attention{animation:install-attention .7s ease}@keyframes install-attention{0%,100%{opacity:1}45%{opacity:.48}}
