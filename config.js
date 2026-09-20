@@ -88,5 +88,6 @@ window.SAMI_CONFIG = {
   siteImageMatchEndpoint: '',
   valhallaEndpoint: 'https://valhalla1.openstreetmap.de/route',
   overpassEndpoint: 'https://overpass-api.de/api/interpreter',
+  overpassFallbackEndpoints: ['https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter'],
   serviceSources: []
 };
