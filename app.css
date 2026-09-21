@@ -504,3 +504,28 @@ html[data-theme="studioLight"] .card,html[data-theme="studioLight"] .draw-object
 .global-menu,.global-menu button{color:#f4f7f5!important}.global-menu button{background:transparent!important}.global-menu button:hover,.global-menu button:focus-visible{background:#34423a!important;color:#ffffff!important}.global-menu button:last-child{color:#ffc7c7!important}
 .precision-cursor{min-width:48px!important;min-height:48px!important;width:48px!important;height:48px!important;touch-action:none!important;pointer-events:auto!important}.precision-cursor:before{left:23px!important;height:48px!important}.precision-cursor:after{top:23px!important;width:48px!important}.precision-cursor i{inset:16px!important}.precision-cursor b{left:21px!important;top:21px!important;width:5px!important;height:5px!important}
 .precision-panel{color:#f4fff8!important}.precision-panel button{color:#f4fff8!important}.precision-panel .primary{color:#07110b!important}.precision-head small,.precision-readout{color:#d8e9df!important}
+
+/* SAMI v2.7.10 — Measure Map-style one-finger measurement UX */
+.precision-cursor{min-width:56px!important;min-height:56px!important;width:56px!important;height:56px!important;touch-action:none!important;pointer-events:auto!important;cursor:grab!important;border:1px solid rgba(126,255,182,.9)!important;background:rgba(4,12,8,.28)!important;box-shadow:0 0 0 7px rgba(66,241,147,.045),0 0 22px rgba(64,255,151,.2)!important;will-change:left,top;contain:layout style paint}
+.precision-cursor:active{cursor:grabbing!important}
+.precision-cursor:before{left:50%!important;top:3px!important;width:1px!important;height:50px!important;transform:translateX(-50%)!important}
+.precision-cursor:after{left:3px!important;top:50%!important;width:50px!important;height:1px!important;transform:translateY(-50%)!important}
+.precision-cursor i{inset:18px!important}
+.precision-cursor b{left:50%!important;top:50%!important;width:5px!important;height:5px!important;transform:translate(-50%,-50%)!important}
+.precision-cursor .precision-live{bottom:calc(100% + 6px);padding:3px 6px;font-size:8.5px}
+.precision-panel.precision-panel-compact{left:50%;bottom:max(12px,calc(env(safe-area-inset-bottom) + 8px));transform:translateX(-50%);width:min(720px,calc(100% - 24px));padding:6px 7px;border-radius:11px;background:rgba(7,12,10,.93)!important;color:#f4fff8!important;border:1px solid rgba(109,236,161,.28)!important;box-shadow:0 12px 38px rgba(0,0,0,.42)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.precision-toolbar{display:flex;align-items:center;gap:7px;min-width:0}
+.precision-panel-compact .precision-modes{display:flex;gap:3px;flex:0 0 auto}
+.precision-panel-compact .precision-modes button{min-width:66px;min-height:40px;padding:7px 10px;border-radius:8px;font-size:9px;background:rgba(255,255,255,.035);color:#dce9e2;border-color:rgba(180,220,199,.17)}
+.precision-panel-compact .precision-modes button.active{background:rgba(72,226,145,.13);border-color:rgba(93,243,161,.52);color:#edfff4}
+.precision-panel-compact .precision-readout{flex:1 1 auto;min-width:0;min-height:0!important;padding:0 5px!important;margin:0;color:#e2eee7!important;font-size:9px!important;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.precision-quick{display:flex;align-items:center;gap:3px;flex:0 0 auto}
+.precision-quick button{min-width:40px;width:40px;min-height:40px;height:40px;padding:0;border-radius:8px;color:#f3fff7!important;background:rgba(255,255,255,.035);border-color:rgba(180,220,199,.17);font-size:14px}
+.precision-quick button.primary{width:auto;min-width:58px;padding:0 12px;background:var(--accent)!important;color:#07110b!important;border-color:transparent!important;font-size:9px;font-weight:800}
+.precision-overflow{position:absolute;right:7px;bottom:calc(100% + 6px);display:grid;gap:4px;min-width:220px;padding:6px;border:1px solid rgba(109,236,161,.24);border-radius:10px;background:rgba(7,12,10,.96);box-shadow:0 13px 34px rgba(0,0,0,.45)}
+.precision-overflow[hidden]{display:none!important}
+.precision-overflow button{min-height:40px;text-align:left;color:#f2fff7!important;background:rgba(255,255,255,.035);border-color:rgba(180,220,199,.16)}
+.precision-panel-compact button[hidden],.precision-panel-compact .precision-modes[hidden]{display:none!important}
+.precision-active #mapViewport{overscroll-behavior:none}
+@media(max-width:680px){.precision-panel.precision-panel-compact{left:10px;right:10px;width:auto;transform:none;padding:6px}.precision-toolbar{gap:4px}.precision-panel-compact .precision-modes button{min-width:54px;padding:6px 7px;font-size:8.5px}.precision-panel-compact .precision-readout{font-size:8.5px!important;padding:0 2px!important}.precision-quick{gap:2px}.precision-quick button{min-width:38px;width:38px;min-height:38px;height:38px}.precision-quick button.primary{width:auto;min-width:50px;padding:0 9px}.precision-overflow{right:6px}}
+@media(max-width:460px){.precision-toolbar{flex-wrap:wrap}.precision-panel-compact .precision-modes{order:1}.precision-panel-compact .precision-readout{order:2;flex:1 1 130px}.precision-quick{order:3;margin-left:auto}.precision-panel.precision-panel-compact{width:auto}.precision-overflow{min-width:200px}}
