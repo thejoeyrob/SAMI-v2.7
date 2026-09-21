@@ -1,10 +1,10 @@
 /* View bearing rotates display only. All project and export geometry stays geographic. */
 window.SAMIBearing=function(map,viewport,onChange,onLockedAttempt){
 'use strict';
-const el=map.getContainer();let bearing=0,size=0,dragStart=null,gesture=null,lockedGesture=null,resizeRaf=0,lastView='',rotationLocked=true,lastLockedHint=0;
+const el=map.getContainer();let bearing=0,size=0,viewWidth=0,viewHeight=0,dragStart=null,gesture=null,lockedGesture=null,resizeRaf=0,lastView='',rotationLocked=true,lastLockedHint=0;
 const rotate=(p,a)=>{a*=Math.PI/180;return L.point(p.x*Math.cos(a)-p.y*Math.sin(a),p.x*Math.sin(a)+p.y*Math.cos(a))};
 const view=()=>viewport.getBoundingClientRect();
-function resize(){const r=view(),key=Math.round(r.width)+'x'+Math.round(r.height);if(key===lastView&&size){apply();return}lastView=key;size=Math.ceil(Math.hypot(r.width,r.height))+4;el.style.width=size+'px';el.style.height=size+'px';el.style.left=(r.width-size)/2+'px';el.style.top=(r.height-size)/2+'px';el.style.transformOrigin='50% 50%';map.invalidateSize({pan:false,animate:false});apply();}
+function resize(){const r=view(),key=Math.round(r.width)+'x'+Math.round(r.height);if(key===lastView&&size){apply();return}const centre=map._loaded?map.getCenter():null,zoom=map.getZoom();lastView=key;viewWidth=r.width;viewHeight=r.height;size=Math.ceil(Math.hypot(r.width,r.height))+4;el.style.width=size+'px';el.style.height=size+'px';el.style.left=(r.width-size)/2+'px';el.style.top=(r.height-size)/2+'px';el.style.transformOrigin='50% 50%';map.invalidateSize({pan:false,animate:false});if(centre)map.setView(centre,zoom,{animate:false});apply();}
 function scheduleResize(){cancelAnimationFrame(resizeRaf);resizeRaf=requestAnimationFrame(resize)}
 function apply(){el.style.transform='rotate('+bearing+'deg)';el.style.setProperty('--counter-bearing',-bearing+'deg');}
 function set(value,save=true){bearing=((Number(value)||0)%360+360)%360;if(Math.abs(bearing-360)<.01)bearing=0;apply();if(save)onChange?.(bearing);map.fire('bearingchange',{bearing});}
@@ -23,5 +23,5 @@ viewport.addEventListener('touchmove',e=>{if(e.touches.length!==2)return;if(rota
 viewport.addEventListener('touchend',e=>{if(e.touches.length<2){if(gesture)onChange?.(bearing);gesture=null;lockedGesture=null;}},{passive:true});
 viewport.addEventListener('touchcancel',()=>{if(gesture)onChange?.(bearing);gesture=null;lockedGesture=null;},{passive:true});
 const observer=new ResizeObserver(scheduleResize);observer.observe(viewport);resize();
-return{set,get:()=>bearing,setLocked:v=>{rotationLocked=!!v;gesture=null;lockedGesture=null;},getLocked:()=>rotationLocked,resize,fromScreen,toScreen,visibleCorners:()=>{const r=view();return[[r.left,r.top],[r.right,r.top],[r.right,r.bottom],[r.left,r.bottom]].map(([x,y])=>map.containerPointToLatLng(fromScreen(x,y)))} };
+return{set,get:()=>bearing,setLocked:v=>{rotationLocked=!!v;gesture=null;lockedGesture=null;},getLocked:()=>rotationLocked,resize,fromScreen,toScreen,fromLocalPoint:(x,y)=>rotate(L.point(x-viewWidth/2,y-viewHeight/2),-bearing).add([size/2,size/2]),toLocalPoint:point=>rotate(L.point(point).subtract([size/2,size/2]),bearing).add([viewWidth/2,viewHeight/2]),visibleCorners:()=>{const r=view();return[[r.left,r.top],[r.right,r.top],[r.right,r.bottom],[r.left,r.bottom]].map(([x,y])=>map.containerPointToLatLng(fromScreen(x,y)))} };
 };
