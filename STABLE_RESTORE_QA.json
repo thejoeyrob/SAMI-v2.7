@@ -1,0 +1,32 @@
+{
+  "baseline_sha256": "fa728976f99addfad9d30d3159cda76714bf2b8ec3adda047b63fcb342ed2a35",
+  "baseline_files": 58,
+  "changed_files": [
+    "app.css",
+    "engine.js",
+    "index.html",
+    "manifest.webmanifest",
+    "sw.js",
+    "workspace.js"
+  ],
+  "unchanged_files": 52,
+  "javascript_syntax_passed": 17,
+  "engine_normalized_exact_match": true,
+  "critical_workspace_functions_unchanged": {
+    "activateAsset": "7c75da67f775",
+    "renderDraft": "ba5a2a32ebe7",
+    "commitPrecision": "d6a7f2efbecb",
+    "startBoxSelect": "cb52aee0ae76",
+    "finishBoxSelect": "74dda9726aa8",
+    "requestEntryPermissions": "9888ff9877db",
+    "fitArea": "2b07c299260b",
+    "visibleArea": "978cddd47d10",
+    "snap": "04a6c7218b1f"
+  },
+  "workspace_action_inventory_preserved": true,
+  "browser_intro_retained": true,
+  "cursor_direct_pointer_alignment": true,
+  "cursor_map_tap_positioning": true,
+  "menu_contrast_override": true,
+  "interactive_browser_test": "not run: managed Chromium blocks all navigation with ERR_BLOCKED_BY_ADMINISTRATOR"
+}
