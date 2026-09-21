@@ -62,7 +62,7 @@ function init(){
  $('#welcomeCard').hidden=true;setupLaunchGate();
  new ResizeObserver(()=>{state.map.invalidateSize({pan:false,animate:false});clampRail();}).observe($('#workspace'));
  window.addEventListener('beforeprint',()=>{if(state.project.area){buildPrintTemplate(state.project.meta);applyPrintScale();}});window.addEventListener('afterprint',()=>{state.map.options.zoomSnap=.25;state.map.invalidateSize({pan:false,animate:false});});
- if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js?v=2711',{updateViaCache:'none'}).catch(()=>{});
+ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js?v=2712',{updateViaCache:'none'}).catch(()=>{});
  window.addEventListener('pagehide',()=>{saveNow();abortLayerRequest();});
 }
 function bindUI(){
