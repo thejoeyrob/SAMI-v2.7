@@ -1,5 +1,14 @@
 window.SAMI_CONFIG = {
   aiEndpoint: '',
+  aiProvider: 'openai-responses',
+  aiModel: 'gpt-5.6-terra',
+  aiProfile: {
+    id: 'sami-uk-construction-v1',
+    jurisdiction: 'United Kingdom',
+    focus: ['SAMI app operation','construction planning','temporary works and site logistics','CDM 2015','lifting operations','overhead power lines','underground services','workplace transport','UK construction guidance and regulation'],
+    sourcePriority: ['hse.gov.uk','legislation.gov.uk','gov.uk','planning.data.gov.uk','networkrail.co.uk'],
+    requireSourcesForGuidance: true
+  },
   voiceEndpoint: '',
   voiceProfile: {
     id: 'sami-voice-v1',
@@ -82,8 +91,8 @@ window.SAMI_CONFIG = {
   recordedVoiceResponse: "voice-response.8d526f596c.mp3",
   organisation: 'JW EDS',
   productName: 'SAMI',
-  build: '0.9.1-structured-workspace',
-  what3wordsApiKey: '',
+  build: '2.7.13-clean-workspace-ai-ready',
+  what3wordsApiKey: 'FCWMCK0M',
   hgvRouteEndpoint: '',
   siteImageMatchEndpoint: '',
   valhallaEndpoint: 'https://valhalla1.openstreetmap.de/route',
