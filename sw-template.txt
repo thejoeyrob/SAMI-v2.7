@@ -33,7 +33,13 @@ self.addEventListener('message', event => {
   if (event.data?.type === 'ACTIVATE_UPDATE') event.waitUntil(self.skipWaiting());
   if (event.data?.type === 'GET_VERSION') event.ports[0]?.postMessage({version: VERSION});
 });
-self.addEventListener('activate', event => { event.waitUntil(Promise.resolve()); });
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(names.filter(name => name.startsWith('sami-production-v') && name !== CACHE).map(name => caches.delete(name)));
+    await self.clients.claim();
+  })());
+});
 async function navigation(request) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(canonical('./index.html'));

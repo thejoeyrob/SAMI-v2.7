@@ -1,9 +1,8 @@
 {
-  "version": "2.7.7",
+  "version": "2.7.14",
   "shell": [
     "./app.css",
     "./bearing.js",
-    "./bootstrap.js",
     "./builtin-assets.js",
     "./cinema.css",
     "./cinema.js",
@@ -11,8 +10,6 @@
     "./creator.css",
     "./documents.js",
     "./engine.js",
-    "./field.css",
-    "./field.js",
     "./geometry.js",
     "./index.html",
     "./intelligence.js",
@@ -20,11 +17,9 @@
     "./layers.png",
     "./leaflet.css",
     "./leaflet.js",
-    "./loader.js",
     "./marker-icon-2x.png",
     "./marker-icon.png",
     "./marker-shadow.png",
-    "./network.js",
     "./polygon-clipping.js",
     "./project-store.js",
     "./pwa.js",
@@ -42,7 +37,9 @@
     "./sami-app-icon-192.png",
     "./sami-app-icon-512.png",
     "./sami-apple-touch-icon.png",
-    "./sami-maskable-512.png"
+    "./sami-maskable-512.png",
+    "./screenshot-phone.png",
+    "./screenshot-wide.png"
   ],
   "media": [
     "sami-intro-cinematic-v230.mp3",
@@ -65,13 +62,27 @@
     "voice-undo.f603e7aa7f.mp3",
     "voice-updated.b3150797fb.mp3",
     "voice-welcome.e1032f6327.mp3",
-    "why-sami-promo-v272.mp3"
+    "why-sami-promo-v271.mp3",
+    "why-sami-promo-v272.mp3",
+    "why-sami-score-v270.mp3"
   ],
   "development": [
     "VERSION.json",
     "build.mjs",
     "sw-template.txt",
     "ASSET_MANIFEST.json"
+  ],
+  "runtimeGenerated": [
+    "sw.js"
+  ],
+  "compatibility": [
+    "bootstrap.js",
+    "field.css",
+    "field.js",
+    "loader.js",
+    "network.js",
+    "download",
+    "STABLE_RESTORE_QA.json"
   ],
   "documentation": [
     ".nojekyll",
@@ -85,7 +96,16 @@
     "POLYGON-CLIPPING-LICENSE.md",
     "QR-CODE-LICENSE.txt",
     "ROADMAP.md",
-    "TEST_REPORT.md"
+    "SAMI_AI_BACKEND_SPEC.md",
+    "SAMI_v2_7_10_MEASUREMENT_RELEASE_NOTES.md",
+    "SAMI_v2_7_10_QA.md",
+    "SAMI_v2_7_11_MEASUREMENT_TOUCH_FIX.md",
+    "STABLE_RESTORE_NOTES.md",
+    "TEST_REPORT.md",
+    "UI_WIREFRAMES.svg"
   ],
-  "screenshots": []
+  "screenshots": [
+    "screenshot-phone.png",
+    "screenshot-wide.png"
+  ]
 }

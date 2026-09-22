@@ -1,23 +1,116 @@
 /* Dev-time only; no package installation or build step is needed to run SAMI. */
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-const root=path.dirname(fileURLToPath(import.meta.url));
-const {version,descriptor}=JSON.parse(fs.readFileSync(path.join(root,'VERSION.json'),'utf8'));
-if(!/^\d+\.\d+\.\d+$/.test(version))throw Error('Invalid semantic version');
-const read=f=>fs.readFileSync(path.join(root,f),'utf8'),write=(f,s)=>fs.writeFileSync(path.join(root,f),s);
-write('version.js',`/* Generated from VERSION.json by build.mjs. */\nwindow.SAMI_VERSION=Object.freeze({version:${JSON.stringify(version)},descriptor:${JSON.stringify(descriptor)},asset:name=>name.split('?')[0]+'?v=${version}'});\n`);
-let html=read('index.html').replace(/data-sami-version="[^"]*"/g,`data-sami-version="${version}"`);
-if(!html.includes('data-sami-version='))html=html.replace('<html ',`<html data-sami-version="${version}" `);
-html=html.replace(/((?:src|href)="|(?:src|href)=')([^"'#?:]+\.(?:js|css|png|svg|webmanifest|mp3))(?:\?v=[^"']*)?(["'])/g,(all,a,file,b)=>/^https?:/.test(file)?all:a+file+'?v='+version+b);
-html=html.replace(/(<span data-version>)[^<]+(<\/span>)/g,'$1v'+version+'$2');
-write('index.html',html);
-const manifest=JSON.parse(read('manifest.webmanifest'));manifest.version=version;
-for(const i of [...manifest.icons,...(manifest.screenshots||[])])i.src=i.src.split('?')[0]+'?v='+version;
-write('manifest.webmanifest',JSON.stringify(manifest,null,2)+'\n');
-const names=fs.readdirSync(root).filter(f=>fs.statSync(path.join(root,f)).isFile());
-const shell=names.filter(f=> (/\.(js|css)$/.test(f)&&f!=='sw.js') || f==='index.html' || ['sami-wordmark.png','sami-mark.png','marker-icon.png','marker-icon-2x.png','marker-shadow.png','layers.png','layers-2x.png'].includes(f)).sort().map(f=>'./'+f);
-const optional=names.filter(f=>/^sami-(app-icon|apple-touch-icon|maskable)/.test(f)||f==='manifest.webmanifest'||f.startsWith('screenshot-')).sort().map(f=>'./'+f);
-const sw=read('sw-template.txt').replace('__VERSION__',JSON.stringify(version)).replace('__SHELL__',JSON.stringify(shell)).replace('__OPTIONAL__',JSON.stringify(optional));write('sw.js',sw);
-write('ASSET_MANIFEST.json',JSON.stringify({version,shell,optional,media:names.filter(f=>f.endsWith('.mp3')),development:['VERSION.json','build.mjs','sw-template.txt','ASSET_MANIFEST.json'],documentation:names.filter(f=>/\.md$|LICENSE/.test(f)||f==='.nojekyll'),screenshots:names.filter(f=>f.startsWith('screenshot-'))},null,2)+'\n');
-console.log(`Stamped SAMI ${version}: ${shell.length} critical files, ${optional.length} optional files, audio lazy.`);
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+const root = path.dirname(fileURLToPath(import.meta.url));
+const { version, descriptor } = JSON.parse(
+  fs.readFileSync(path.join(root, "VERSION.json"), "utf8"),
+);
+if (!/^\d+\.\d+\.\d+$/.test(version)) throw Error("Invalid semantic version");
+const read = (f) => fs.readFileSync(path.join(root, f), "utf8"),
+  write = (f, s) => fs.writeFileSync(path.join(root, f), s);
+write(
+  "version.js",
+  `/* Generated from VERSION.json by build.mjs. */\nwindow.SAMI_VERSION=Object.freeze({version:${JSON.stringify(version)},descriptor:${JSON.stringify(descriptor)},asset:name=>name.split('?')[0]+'?v=${version}'});\n`,
+);
+let html = read("index.html").replace(
+  /data-sami-version="[^"]*"/g,
+  `data-sami-version="${version}"`,
+);
+if (!html.includes("data-sami-version="))
+  html = html.replace("<html ", `<html data-sami-version="${version}" `);
+html = html.replace(
+  /((?:src|href)="|(?:src|href)=')([^"'#?:]+\.(?:js|css|png|svg|webmanifest|mp3))(?:\?v=[^"']*)?(["'])/g,
+  (all, a, file, b) =>
+    /^https?:/.test(file) ? all : a + file + "?v=" + version + b,
+);
+html = html.replace(
+  /(<span data-version>)[^<]+(<\/span>)/g,
+  "$1v" + version + "$2",
+);
+write("index.html", html);
+let config = read("config.js").replace(
+  /build:\s*["'][^"']*["']/,
+  `build: ${JSON.stringify(version)}`,
+);
+write("config.js", config);
+const manifest = JSON.parse(read("manifest.webmanifest"));
+manifest.version = version;
+for (const i of [...manifest.icons, ...(manifest.screenshots || [])])
+  i.src = i.src.split("?")[0] + "?v=" + version;
+write("manifest.webmanifest", JSON.stringify(manifest, null, 2) + "\n");
+const names = fs
+  .readdirSync(root)
+  .filter((f) => fs.statSync(path.join(root, f)).isFile());
+const referenced = [...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)]
+  .map((match) => match[1].split(/[?#]/)[0].replace(/^\.\//, ""))
+  .filter((name) => !/^(?:https?:|data:|blob:)/.test(name));
+const shellNames = new Set([
+  "index.html",
+  ...referenced.filter((name) => /\.(?:js|css)$/.test(name)),
+  "sami-wordmark.png",
+  "sami-mark.png",
+  "marker-icon.png",
+  "marker-icon-2x.png",
+  "marker-shadow.png",
+  "layers.png",
+  "layers-2x.png",
+]);
+const missing = [...shellNames].filter((name) => !names.includes(name));
+if (missing.length) throw Error("Missing critical app files: " + missing.join(", "));
+const shell = [...shellNames]
+  .sort()
+  .map((f) => "./" + f);
+const optional = names
+  .filter(
+    (f) =>
+      /^sami-(app-icon|apple-touch-icon|maskable)/.test(f) ||
+      f === "manifest.webmanifest" ||
+      f.startsWith("screenshot-"),
+  )
+  .sort()
+  .map((f) => "./" + f);
+const sw = read("sw-template.txt")
+  .replace("__VERSION__", JSON.stringify(version))
+  .replace("__SHELL__", JSON.stringify(shell))
+  .replace("__OPTIONAL__", JSON.stringify(optional));
+write("sw.js", sw);
+write(
+  "ASSET_MANIFEST.json",
+  JSON.stringify(
+    {
+      version,
+      shell,
+      optional,
+      media: names.filter((f) => f.endsWith(".mp3")),
+      development: [
+        "VERSION.json",
+        "build.mjs",
+        "sw-template.txt",
+        "ASSET_MANIFEST.json",
+      ],
+      runtimeGenerated: ["sw.js"],
+      compatibility: [
+        "bootstrap.js",
+        "field.css",
+        "field.js",
+        "loader.js",
+        "network.js",
+        "download",
+        "STABLE_RESTORE_QA.json",
+      ].filter((f) => names.includes(f)),
+      documentation: names.filter(
+        (f) =>
+          /\.md$|LICENSE/.test(f) ||
+          f === ".nojekyll" ||
+          f === "UI_WIREFRAMES.svg",
+      ),
+      screenshots: names.filter((f) => f.startsWith("screenshot-")),
+    },
+    null,
+    2,
+  ) + "\n",
+);
+console.log(
+  `Stamped SAMI ${version}: ${shell.length} critical files, ${optional.length} optional files, audio lazy.`,
+);

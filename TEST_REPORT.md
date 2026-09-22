@@ -1,61 +1,85 @@
-# SAMI v2.7.7 — Test Report
+# SAMI v2.7.14 — Test report
 
-## Evidence policy
+Tested 22 September 2026. A pass below means the check was run against the final release tree; limitations are stated explicitly.
 
-No test is reported as freshly passed unless it was run. This release was reconstructed from the completed max-thinking work trail after the temporary work directory was cleared. The report therefore separates **fresh reconstruction checks** from **earlier max-thinking browser evidence**. The earlier browser evidence was produced against the same v2.7.7 implementation trail before the temporary directory was cleared; it was not rerun after reconstruction where the current managed Chromium policy blocks localhost navigation.
+## v2.7.14 feedback-fix verification
 
-## Fresh reconstruction checks
+The v2.7.14 delta was built from the completed v2.7.13 field/CAD/services release. The following checks were rerun against the final v2.7.14 source tree:
 
-- Baseline ZIP SHA-256: **PASS** — `fa728976f99addfad9d30d3159cda76714bf2b8ec3adda047b63fcb342ed2a35`.
-- Baseline archive shape: **PASS** — 58 flat-root entries, no path traversal.
-- JavaScript syntax: **PASS** — all 23 final `.js` files pass `node --check` after reconstruction.
-- Version stamping: **PASS** — `VERSION.json`, `version.js`, manifest and generated service worker are v2.7.7; old legacy 271/266/276 query drift is absent after stamping. Remaining “v2.7.6” text is limited to historical CSS comments.
-- Viewport accessibility: **PASS (static)** — `maximum-scale` / `user-scalable=no` are absent.
-- Manifest: **PASS (static)** — standalone, language `en-GB`, direction, categories, display override, shortcuts and 192/512/maskable icons are present.
-- Service-worker structure: **PASS (static/unit)** — generated critical shell, 3 s navigation timeout, navigation-only HTML fallback, old-version asset guard, lazy MP3 cache/range support and explicit update activation are present.
-- Fresh network-helper unit: **PASS** — duplicate request collapsed, repeat query cached, distinct query spacing measured **1101 ms**.
-- Fresh service-worker timeout unit: **PASS** — stalled navigation used cached HTML after **3004 ms**; the asset-failure contract remains 503 rather than HTML.
-- Baseline preservation: **PASS (final packaging check)** — baseline file names are retained; recorded MP3 and licence-file hashes are checked before packaging.
-- Feature/control inventory: **PASS (final packaging check)** — baseline literal HTML IDs/actions and existing `sami.*` literal keys are checked for unexplained removal before packaging.
-- Final ZIP: **PASS only after packaging** — archive is reopened, every entry is at root, `unzip -t` succeeds, and the generated `.sha256` line names the actual ZIP.
+| Area | Result | Evidence |
+|---|---|---|
+| JavaScript syntax | **PASS** | All 23 shipped `.js` files pass `node --check`. |
+| CSS parse | **PASS** | `app.css` parses with zero top-level `tinycss2` errors. |
+| Version/manifest | **PASS** | `VERSION.json`, generated runtime version, service worker and manifest are stamped `2.7.14`; manifest primary display is `standalone` and no longer prefers window-controls-overlay. |
+| Installed-app detection | **PASS — static** | Bootstrap, cinema, engine and workspace recognise standalone, minimal-ui, window-controls-overlay and `navigator.windowControlsOverlay.visible`. |
+| Precision controls | **PASS — static/syntax** | Unified pointer drag path is present; exact pointer-up placement, map-tap repositioning, **＋ Point**, **◎ Me**, current-position geolocation, nudge/keyboard actions and map-under-crosshair guidance are present. |
+| Placement stale-state fix | **PASS — static/syntax** | Tool start and route-pick paths clear stale click/drag/pan suppression before accepting a deliberate map point. |
+| Route W3W | **PASS — static/syntax** | Dropped route point calls reverse-geocode and what3words conversion when a key is configured; route state stores coordinate/address/W3W independently. |
+| Services | **PASS — static/syntax** | Checked layers trigger the existing mapping refresh; public reference query includes gas/water/wastewater plus drain/ditch tags and retains failure fallbacks. |
+| OHL popup | **PASS — static/syntax** | Compact OHL card contains immediate Add/Update support and Edit actions. Existing v2.7.13 OHL fixture coverage remains unchanged. |
+| Promo timing | **PASS — static** | From the PLAN ACCESS cue onwards the visual text lead changes from 0.9 s to 1.5 s, including the closing SAMI morph sequence. |
+| Light UI/sidebar/tabs | **PASS — CSS parse/static** | Light-mode topbar/bubbles/inspector/precision controls use appearance tokens; nested compact sections lose stagger indentation; inspector tabs have zero gap/radius and connect to panel body. |
 
-## Earlier max-thinking browser and functional evidence preserved from the work trail
+### Browser-run limitation for this delta
 
-The following tests were run successfully before the temporary working directory was cleared:
+A new Playwright v2.7.14 integration script was prepared for installed-PWA detection, touch cursor drag, asset placement, route W3W, services/OHL and light-theme rendering. Chromium launches in this environment, but every navigation is blocked by the host policy with `net::ERR_BLOCKED_BY_ADMINISTRATOR`, including a fully intercepted synthetic HTTPS origin. Therefore **no fresh v2.7.14 browser/device pass is claimed**. The v2.7.13 results below are retained as the immediately preceding regression baseline and the v2.7.14-specific behaviours are marked for first-priority real-device acceptance.
 
-- Baseline headless Chromium load with no JavaScript exceptions.
-- v2.7.6 project fixture migration/open: project ID, `createdAt`, notes and saved edits survived reload.
-- Autosave to IndexedDB and recovery-journal quota failure: IndexedDB save succeeded and the user received a visible recovery warning.
-- Simulated IndexedDB save failure: New Project was prevented from replacing the unsaved project; retry succeeded.
-- Service-worker lifecycle: first install, offline reload, versioned JS offline, missing JS returned 503 instead of HTML, cached MP3 byte ranges, waiting-update state, Save & reload activation, existing project survived update.
-- Drawing/export smoke: site area, Trakway run, Undo/Redo, project backup/restore, GeoJSON, KML, CSV, DXF, A3 PDF and A4 PDF.
-- Precision measurement: 1 m nudge, 5 m/Shift nudge, keyboard/tap controls and add-to-plan path.
-- Robustness: malformed project import preserved the active project; dynamic project-name/script injection fixture did not execute; unsafe SVG style/onload path was blocked; QR and shape-import lazy-load path worked.
-- Theme/accessibility scope: automated contrast checks passed for all 13 themes in the tested Explore/precision state after the light-theme fixes; phone/short-landscape cursor/rail issues discovered by QA were subsequently fixed.
-- Network helper unit: duplicate geocoder query collapsed to one request; repeat query used memory cache; subsequent distinct request was spaced about 1.1 s.
-- Service-worker slow-navigation unit: cached navigation fallback occurred at about 3.0 s.
-- PDF inspection: A3/A4 document generation and title/project metadata were inspected; the dark wordmark backing and unsupported measurement glyph were corrected afterward.
-- Wake-lock/multitouch/version retention checks were added to the work trail: active-tool wake lock releases after tool exit, second touch does not add a precision point, stale save completion must not overwrite a newer Saving state, and version history remains capped at 30.
+## v2.7.13 regression baseline
+
+## Release provenance
+
+- Original supplied v2.7.6 ZIP SHA-256: **PASS** — `fa728976f99addfad9d30d3159cda76714bf2b8ec3adda047b63fcb342ed2a35`.
+- Latest GitHub baseline reviewed: **PASS** — v2.7.12, commit `aa59b001941f3d761c490298e6ae54bf0d965e03`.
+- Preservation rule: the v2.7.12 tree was the functional baseline; earlier work was retained only where it was compatible and tested.
+
+## Automated results
+
+| Area | Result | Evidence |
+|---|---|---|
+| Static integrity | **PASS** | v2.7.13 baseline: 24 JavaScript files passed `node --check`; manifest/references and recorded voice wording were validated. |
+| Feature inventory | **PASS** | Baseline v2.7.12: 191 literal controls, 113 literal actions, 24 literal storage keys. v2.7.13: 194 controls, 117 actions, 26 keys. No baseline literal control, action or key is missing. |
+| v2.7.6 storage compatibility | **PASS** | A v2.7.6-shaped project preserved ID `v276-preserved-project`, data and edits after reload. No destructive database cleanup was detected. |
+| Save failure handling | **PASS** | localStorage recovery quota failure still saved to IndexedDB and showed a backup warning. Simulated IndexedDB failure showed `Save failed`, retained the active project and allowed retry. |
+| Drawing smoke | **PASS** | Site area, Trakway run, Undo/Redo, drag/drop asset, 13 themes, backup/import, GeoJSON and PDF executed without captured page errors. |
+| Precision cursor | **PASS** | Drag offset measured 84 × -48 px. On-screen and rotated-map nudge tests both produced an exact 5.0 m total. Initial focus remained on `BODY`. |
+| Services/OHL | **PASS (mocked source)** | KML service import passed. Overpass fixture returned 400 V, 11 kV, 400 kV and untagged OHL, seven supports, plus gas, water and drainage types. |
+| Visio import | **PASS** | Modern Visio XML fixture imported one shape/two parts. Legacy binary `.vsd`/`.vss` produced conversion guidance rather than a silent failure. |
+| Service worker lifecycle | **PASS** | First install cached the shell but not audio; offline reload/edit worked; versioned JS stayed JavaScript; missing JS returned blank 503; MP3 range returned 206 online/offline; waiting worker activated only after consent; project survived simulated 2.7.13→2.7.14 update. |
+| Weak-network fallback | **PASS** | A stalled navigation returned the cached shell after 3003 ms. |
+| UI/accessibility subset | **PASS** | Automated subset reported zero violations in each of 13 themes. 390×844, 844×390, 1024×768 and 1366×1024 layouts had no document overflow, cursor clipping or cursor/panel overlap. Escape closed the tested modal. |
+| Theme contrast tokens | **PASS** | Worst measured normal-text ratios ranged from 5.46:1 to 6.23:1; UI-boundary ratios ranged from 3.39:1 to 4.42:1. |
+| Install guidance | **PASS (emulated)** | iOS Safari/Chrome, iPad desktop mode, Android Chrome/Firefox, Samsung Internet, embedded browser, desktop Chrome/Firefox and macOS Safari all showed a gate with platform-specific instructions and a reachable `Skip to install`. |
+| PWA shortcuts | **PASS** | New site, open last project and route-to-site opened the intended workspace/mode, removed the query string and left `BODY` focused. |
+| PDF inspection | **PASS** | Generated A3 PDF: two pages, 95,920 bytes. Rendered pages and extracted text were inspected: white paper, dark transparent SAMI wordmark, title block, main-road/provider attribution, thin service lines and boxed optional OHL schedule were present; no unsupported-glyph marker remained. |
 
 ## Performance
 
-The requested target was first useful screen under roughly 2.5 seconds on a throttled mid-range phone. The max-thinking performance run did **not** meet it:
+The warm/offline result is good; the simulated cold result remains above the requested target.
 
-- Simulated 4× CPU slowdown + approximately 1.6 Mbps / 150 ms cold repeat launch: about **10.2 s**.
-- Warm offline repeat launch: about **3.3 s**.
+- 4× CPU slowdown, approximately 1.6 Mbps and 150 ms latency, uncompressed local host: **9962.3 ms** to the measured repeat-launch ready point.
+- Warm offline repeat launch: **418.7 ms**.
+- Requested cold target: about 2500 ms — **not met in this artificial uncompressed serial-resource test**.
 
-This is a release limitation, not hidden. Wider lazy-loading of `documents.js`, `studio.js` and the built-in asset catalogue would require a larger dependency refactor than is appropriate for a no-regression patch release.
+Host Brotli/gzip will materially reduce transfers, but real-device measurement is still required. Large runtime-coupled modules were not split in this release because doing so late would create disproportionate regression risk.
 
-## Current environment limitation
+## Not run or not claimed
 
-A fresh Chromium rerun after reconstruction was attempted. The managed browser returned `chrome-error://chromewebdata/` with **“127.0.0.1 is blocked — Your organization doesn’t allow you to view this site.”** This environment-level `URLBlocklist` prevents a meaningful localhost PWA/browser rerun. It was not bypassed. Therefore real-device/browser checks are left in `MANUAL_TEST_CHECKLIST.md` and the earlier browser evidence above is explicitly labelled as earlier evidence, not a fresh pass.
+- No physical iPhone, iPad, Android, Windows or macOS device was available. Browser emulation is not a substitute for touch hardware, VoiceOver/TalkBack, outdoor glare, OS process eviction or install UI.
+- Live external provider calls were not used in the functional run. OHL, utility, geocoder and routing behaviours were tested with controlled fixtures/mocks; production coverage and provider availability remain location-dependent.
+- No statutory gas, water or sewer dataset was supplied. Public OpenStreetMap-derived utility mapping is reference information and must never be treated as proof that a service is absent.
+- Real GPS, microphone, wake-lock denial, pen hardware, Web Share and native file-picker behaviour were not exercised.
+- No complete WCAG conformance audit, penetration test, high-volume load test or independent drawing-scale certification was performed.
+- The first-install/no-cache/no-network case cannot load a web app and should show the browser’s normal unavailable state.
 
-## Not certified by automation
+Use `MANUAL_TEST_CHECKLIST.md` before production rollout.
 
-- iOS Safari/Chrome/Firefox and iPadOS standalone lifecycle.
-- Android Chrome/Samsung/Firefox real install UI and OS eviction behaviour.
-- Real GPS/microphone/speech-recognition prompts.
-- Outdoor glare/readability and glove/pen ergonomics.
-- HGV route suitability, OHL/service completeness or survey-grade geometry.
-- Provider licensing for a customer's specific imagery/export use.
-- WCAG conformance as a whole.
+## Previous v2.7.13 package validation
+
+- `SAMI_v2_7_13_FIELD_CAD_SERVICES_ROOT_FLAT_PWA.zip`: **PASS** — 90 entries, every entry at archive root, and `unzip -t` reported no errors.
+
+## v2.7.14 package validation
+
+- `SAMI_v2_7_14_FIELD_TOUCH_SERVICES_UI_ROOT_FLAT_PWA.zip`: **PASS** — produced from exactly **90** tracked release files, with every entry at archive root and no containing directory.
+- `unzip -t`: **PASS** — no compressed-data errors.
+- Archive-path check: **PASS** — zero entries contain `/`.
+- The companion SHA-256 is generated only after the definitive ZIP is written and names this exact archive.

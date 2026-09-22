@@ -1,4 +1,6 @@
-# SAMI v2.7.7 — Phase 2 implementation plan
+# SAMI v2.7.13 — Phase 2 implementation plan and delivery trace
+
+This is the original pre-implementation plan carried forward from the verified v2.7.6 audit, then reconciled with the repaired GitHub v2.7.12 baseline. The implemented v2.7.13 status and measured results are recorded in `AUDIT_REPORT.md` and `TEST_REPORT.md`.
 
 Delivered before application changes. Applies to the supplied hash-verified baseline. No runtime build, framework, storage schema migration, provider replacement, voice-text change or feature removal is planned.
 

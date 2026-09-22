@@ -1,4 +1,12 @@
-# SAMI v2.7.6 — Phase 1 feature inventory
+# SAMI v2.7.13 — Feature inventory and baseline trace
+
+This document preserves the full pre-edit v2.7.6 inventory below so the regression boundary remains auditable. The continuation also compared the repaired GitHub v2.7.12 baseline (`aa59b001941f3d761c490298e6ae54bf0d965e03`) before applying v2.7.13 changes.
+
+The automated v2.7.12 inventory found 20 active HTML/JS source files, 191 literal controls, 113 literal actions, 24 literal `sami.*` storage keys, 59 HTML sinks, 79 dependency edges and 681 named functions. The final v2.7.13 inventory found 20 active sources, 194 controls, 117 actions, 26 keys, 59 sinks, 89 dependency edges and 700 named functions. No literal baseline control, action or storage key is missing.
+
+v2.7.13 adds or verifies modern Visio OpenXML/VDX import, KML/KMZ service import, public reference gas/water/drainage mapping, expanded OHL voltage/support handling, asset drag/drop, precision tap/drag/nudge input, the optional OHL PDF schedule, PWA shortcuts, platform-specific installation guidance and explicit backup/update states. Audio is lazy-cached and never starts without a user gesture. The complete status and limitations are in `AUDIT_REPORT.md` and `TEST_REPORT.md`.
+
+## Original v2.7.6 pre-edit inventory
 
 Read-only inventory completed before implementation, 21 September 2026. Locations refer to the pretty-printed reference copies, not the original one-line files. Untouched baseline retained. Hash verified: `fa728976f99addfad9d30d3159cda76714bf2b8ec3adda047b63fcb342ed2a35`.
 
@@ -25,7 +33,7 @@ Load order: Leaflet → config → polygon-clipping → geometry → QR → docu
 
 Storage: `sami-projects` v2 (`projects`, `versions` with projectId index, `profiles`), plus **SAMI_DATA_ARCHIVE v1** (`snapshots`, sourceId index). The second database was omitted from the supplied baseline facts. Checkpoint cap 30; ordinary checkpoints every >60 seconds; explicit checkpoints may occur sooner. Project format SAMI-PROJECT-3, schemaVersion 5. No migration planned.
 
-KML is an export, not a verified KML import. GeoJSON is a services/data-pack import; DXF is a shape import and drawing export. Sandstone is a warm dark theme, not one of the three true light themes. Cinema includes an unused 1.6 MB intro MP3; it stays in the release to avoid removing an asset. Promo has preload=auto. The app already has backup/restore and upload limits (50 MB project/data; 25 MB shape packs), as well as modal focus trap/restore and a toast live region.
+At this baseline point, KML was an export rather than a verified import. GeoJSON was a services/data-pack import; DXF was a shape import and drawing export. Sandstone was a warm dark theme, not one of the three true light themes. Cinema included an unused 1.6 MB intro MP3. The baseline already had backup/restore and upload limits (50 MB project/data; 25 MB shape packs), modal focus trap/restore and a toast live region. The final release changes are described above.
 
 ## Persistent key map
 

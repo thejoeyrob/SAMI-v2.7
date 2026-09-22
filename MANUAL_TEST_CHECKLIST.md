@@ -1,54 +1,79 @@
-# SAMI v2.7.7 — Real-device acceptance checklist
+# SAMI v2.7.14 — Real-device acceptance checklist
 
-Deploy the flat-root ZIP to a test HTTPS origin first. Export a v2.7.6 project backup before upgrading production.
+Deploy the flat ZIP to a staging HTTPS origin. Export a v2.7.6/v2.7.12 project backup before replacing production files.
 
-## Data and update — test first
 
-- [ ] In v2.7.6 create a named project containing a site area, Trakway, service, note, photo/logo and custom shape. Export a `.sami` backup and record counts/dimensions.
-- [ ] Replace hosted files with v2.7.7 while an old tab remains open. Confirm it does **not** reload mid-edit. Finish an edit, choose **Save & reload**, and verify all data after update.
-- [ ] Close/reopen with a waiting update and verify the same project identity is selected rather than a duplicate.
-- [ ] Make an edit, wait for **Saved**, force-close and reopen offline. Compare geometry, notes and drawings. Repeat immediately after an edit to assess the latest asynchronous-write window.
-- [ ] Deny/fill site storage on a test device. Verify visible save/recovery warning, Retry, Backup, and that New/Open does not discard the current unsaved project.
-- [ ] Export a backup, verify the file exists in Downloads/Files, import it, and confirm it opens as a **separate** project while the original remains accessible.
-- [ ] Confirm API keys/connected-service preferences are absent from the portable backup.
-- [ ] Test persistent-storage permission granted, denied and unsupported.
-- [ ] Back up before browser-data clear/uninstall. After reinstall, import the backup; do not expect cleared browser storage to survive.
+## 0. v2.7.14 feedback fixes — test before anything else
 
-## Installation / devices
+- [ ] **Windows/macOS installed PWA:** launch from the installed app icon. It must enter SAMI and must not remain trapped on the browser/install screen. Test Chrome/Edge PWA on Windows and Chrome/Edge/Safari-supported install mode on macOS.
+- [ ] **iPad/iPhone measurement:** drag the crosshair with one finger and confirm it stays under the finger on release. Also test the alternative workflow: pan the map beneath the crosshair, tap **＋ Point**, and use **◎ Me** to centre on current position before adding a point.
+- [ ] **Tap placement:** verify at least one non-Trakway asset, Route destination and measurement point all respond to a deliberate map tap immediately after switching tools.
+- [ ] **Route W3W:** with a valid what3words key configured, drop the destination pin and confirm coordinate, address and W3W populate automatically. Repeat offline/without key: coordinate must still remain usable and no project data is lost.
+- [ ] **Services:** enable OHL, gas, water and drainage/sewerage. Checked layers should start their refresh without a hidden extra step. Compare public reference data with known source plans.
+- [ ] **OHL support popup:** tap a mapped pole/tower. Confirm the compact card shows **+ Add support / Update support** and **Edit** side by side without first opening an edit dialog.
+- [ ] **Promo:** replay Why SAMI and watch from **PLAN ACCESS** onwards. Text/scene cues should no longer lag behind the recorded voice.
+- [ ] **Arctic Light / Paper / Studio Light:** header, selected-object bubble, area/draw status, inspector, menu and measurement panel must remain readable and belong to the chosen appearance.
+- [ ] **Sidebar:** open nested asset/service groups. Subgroups must open directly below their parent with no increasing horizontal stagger. Inspector tabs must visually join the panel below.
 
-- [ ] iPhone/iPad Safari: Add to Home Screen, standalone first launch, Skip, repeat direct-to-workspace, safe areas, keyboard and background/foreground return.
-- [ ] iOS Chrome/Firefox: verify actual current Add to Home Screen capability; otherwise follow the Safari/copy-link handoff. No dead end.
-- [ ] Android Chrome: install prompt, cancellation/retry, appinstalled state and standalone relaunch.
-- [ ] Samsung Internet and Firefox Android: verify current menu installation and standalone detection.
-- [ ] WhatsApp/Teams/Outlook in-app browser: copy/open in a supported browser; no unusable Install button.
-- [ ] Desktop Chrome/Edge/Firefox/Safari: guidance matches actual install/Add to Dock capability.
-- [ ] iPadOS desktop mode and rotation with inspector/precision controls open.
-- [ ] Phone portrait (~390 px), short landscape and tablet landscape: no clipped essential action; cursor/panel do not obscure each other; map rail scrolls; Undo/Redo reachable.
+## 1. Data and update — test first
 
-## Drawing and input
+- [ ] In the old version create a named project containing a site area, Trakway run, service, note, photo/logo and custom shape; export a `.sami` backup.
+- [ ] Deploy v2.7.14 while the old app remains open. Confirm it does not reload mid-edit. Choose **Save & reload** and verify project identity, geometry, notes, images and history.
+- [ ] Edit, wait for **Saved**, force-close and reopen offline. Repeat with a simulated save failure; the project must stay open and **Retry**/**Export backup** must work.
+- [ ] Export and re-import a backup. Confirm endpoints/API preferences are not included in the portable project.
+- [ ] Test persistent-storage granted, denied and unsupported. Back up before clearing browser data or uninstalling.
 
-- [ ] Site area by rectangle, points and freehand; verify frame/scale/orientation after save/reopen.
-- [ ] Trakway single/run/fill/corners and other surfaces/assets; move/rotate/resize where allowed; group, lock, hide, duplicate, delete, Undo/Redo.
-- [ ] Precision with finger, pen, mouse: drag, Tap position, Drop point, 1 m/5 m nudges, arrows/Shift, Enter/Space, Backspace, Escape, Add to plan and Use for site plan.
-- [ ] Repeat precision at several zooms/bearings and compare metre steps with a known reference. A second touch/pinch must not add a point.
-- [ ] Several hundred vertices: pan/zoom/draw responsiveness and long-session stability.
-- [ ] All 13 themes, system default, manual override, custom accent and Outdoor contrast over real satellite imagery/direct sunlight.
-- [ ] Browser/text zoom to 200%; keyboard-only navigation; VoiceOver/TalkBack names/focus/menu/drawer/modal/save/toast states.
-- [ ] OS reduced motion and in-app reduced motion. Intro/replay Skip reachable. No audio before a user gesture.
-- [ ] Location and microphone permission: granted, denied and changed later. Existing projects must not be recentered unexpectedly.
-- [ ] Wake lock enabled during active drawing, released after finish/cancel/background; denied/unsupported state is honest.
+## 2. Install, intro and devices
 
-## Offline, connected services and outputs
+- [ ] Browser page launch: the clean centre animation plays without the removed squiggle, **Skip to install** stays reachable, instructions match the platform and no audio starts without a gesture.
+- [ ] Installed repeat launch: workspace opens promptly without replaying the browser install sequence.
+- [ ] iPhone/iPad Safari, iOS alternate browser handoff, iPad desktop mode, Android Chrome, Samsung Internet, Firefox Android and an in-app browser link.
+- [ ] Desktop Chrome/Edge, Firefox and macOS Safari. Verify the gate never presents an unusable install button.
+- [ ] Rotate at phone portrait, short landscape and tablet landscape. Safe areas, rails, drawer, inspector and keyboard must not cover the placement point.
+- [ ] Enter the workspace: the address/postcode field must not be focused and the on-screen keyboard must stay closed.
 
-- [ ] Open once online, then Airplane mode: reload shell, open/save/edit project, draw, backup and local exports. Do **not** expect an offline basemap unless separately licensed/provisioned.
-- [ ] Weak-signal/black-hole test: navigation should fall back to cached shell after ~3 s. A failed `.js`, `.css` or `.mp3` must never receive HTML.
-- [ ] First-ever launch with no cache/no network: show unavailable rather than claiming offline readiness; reconnect and retry.
-- [ ] Play promo/voice once, then test cached audio seeking/ranges offline.
-- [ ] Search address/coordinates/what3words; HGV route; services/constraints/OHL; test no key, timeout, cancellation, no result and service unavailable. Independently validate operational route suitability.
-- [ ] Import valid/malformed/oversized project, GeoJSON, SVG, DXF, shape pack and supported Visio. Error paths must leave the active project intact. KML is an export capability; do not assume general KML import.
-- [ ] Export A4/A3 CAD/map/satellite PDF, browser print, GeoJSON, DXF, KML, CSV and `.sami` backup. Compare title block, scale, north, coordinates, layers, logos, notes, QR and route sheets with the screen.
-- [ ] Cancel a PDF during a long job; no unintended download and the project remains unchanged.
-- [ ] Verify current map/imagery attribution/licensing for the actual distributed output.
-- [ ] Test manifest shortcuts: New site, Last project and Route. New site must save/preserve the previous project.
+## 3. Drawing, assets and cursor
 
-Record device, OS/browser version, deployment URL, pass/fail and screenshots. Stop rollout for data loss, failed upgrade/reload, materially incorrect scale/geometry or an inaccessible essential control.
+- [ ] Create site area by rectangle, points and freehand. Create Trakway single/run/fill/corners; move, rotate, resize, group, lock, hide, duplicate, delete and Undo/Redo.
+- [ ] Drag a catalogue item onto the drawing on iPad/desktop; tap-place the same item on a phone. The item must land at the intended point.
+- [ ] Precision cursor with finger, pen and mouse: drag, map tap, cursor tap, drop point, cancel and undo. Pinch zoom must not move or drop the cursor.
+- [ ] Test 1 m/5 m on-screen nudges and arrows/Shift at map bearings 0°, 32° and 90°. Compare with a known reference.
+- [ ] Test keyboard Enter/Space, Backspace and Escape. Verify coordinate, bearing, next distance and total-distance readout.
+- [ ] Confirm wake lock is requested only during active drawing/measuring and releases on finish, cancel or background.
+- [ ] Add pylons and poles through **+**. Confirm larger outline/no fill, line-colour choice, selection and compact detail popup.
+
+## 4. Themes, space and accessibility
+
+- [ ] Switch all 13 appearances plus system default/manual override. Menus, drawers and dialogs must follow the selected scheme.
+- [ ] Test light themes and outdoor/high-contrast use over satellite imagery in direct sunlight.
+- [ ] Verify at least 44 px controls (48 px map tools), thumb reach, no hover-only action and maximum useful map space in portrait/landscape.
+- [ ] Browser/text zoom to 200%; keyboard-only navigation; VoiceOver/TalkBack names, focus order, drawer/modal trapping and focus restoration.
+- [ ] OS and in-app reduced motion. Check status/toast announcements and that repeated tool selection does not create unnecessary popups.
+
+## 5. OHL and utility services
+
+- [ ] At known sites request OHL for 400 V, 11/33/66/132/275/400 kV, untagged overhead lines, `line` and `minor_line`, and mapped supports.
+- [ ] Select each tower/pole and verify reference, description, voltage, line name and owner where the source supplies them.
+- [ ] Simulate provider failure. Last-good OHL should remain available and the message must say local tools still work.
+- [ ] Load gas, water and drainage/sewerage public/reference layers. Compare against authoritative plans: absence on SAMI must never be read as absence on site.
+- [ ] Import representative KML and KMZ statutory/survey service files. Confirm line types, labels, provenance, 1 px default screen line and save/reopen.
+- [ ] Check cancellation/error/retry states on weak signal and ensure OSM/Esri/planning attribution remains visible.
+
+## 6. Imports and exports
+
+- [ ] Import GeoJSON, KML, KMZ and malformed/oversized files. A failed import must leave the active project untouched and show a plain-English error.
+- [ ] Import VSSX, VSDX, VSTX, VSDM, VSTM, VDX and SVG/DXF samples with curves, groups and scale references. Legacy `.vsd`/`.vss` must show conversion guidance.
+- [ ] Export `.sami`, GeoJSON, KML, CSV, DXF and PDF; share where supported.
+- [ ] In PDF review keep the OHL schedule off by default, then enable it. Check grouped voltage/name/owner and pole/tower reference/description boxes.
+- [ ] Inspect A4/A3 white-paper CAD output: dark SAMI logo without a surrounding box, title block, drawing/revision, scale/north, linked roads, essential main-road labels, 0.25 mm service lines and provider attribution.
+- [ ] Verify user/company transparent PNG logos retain aspect ratio and stay inside their designated box.
+
+## 7. Offline and deployment
+
+- [ ] Load online once, then use Airplane mode: reload, open/save/edit/draw, backup and local exports. An offline basemap is not included.
+- [ ] On a network black hole, cached navigation should recover at about 3 seconds. Failed JS/CSS/audio must never receive HTML.
+- [ ] Fill storage close to quota and verify the visible warning; lazy audio caching must not prevent shell installation.
+- [ ] Validate manifest/installability, maskable icon, phone/wide screenshots and New/Last/Route shortcuts from the installed app.
+- [ ] Serve the extracted files directly from the repository publication root with HTTPS. Do not add a containing folder; retain `.nojekyll`.
+
+Record device model, OS, browser/PWA mode, build `2.7.14`, pass/fail, screenshot and reproduction steps for every failure.

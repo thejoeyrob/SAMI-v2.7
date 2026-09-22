@@ -1,86 +1,1017 @@
-(function(root){
-'use strict';
-const td=new TextDecoder();
-const MAX_PARTS=500, MAX_ASSETS=250;
-const num=v=>{const n=parseFloat(String(v??'').replace(',','.'));return Number.isFinite(n)?n:null;};
-const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const matrix=(a=1,b=0,c=0,d=1,e=0,f=0)=>({a,b,c,d,e,f});
-const mul=(m,n)=>matrix(m.a*n.a+m.c*n.b,m.b*n.a+m.d*n.b,m.a*n.c+m.c*n.d,m.b*n.c+m.d*n.d,m.a*n.e+m.c*n.f+m.e,m.b*n.e+m.d*n.f+m.f);
-const pt=(m,p)=>[m.a*p[0]+m.c*p[1]+m.e,m.b*p[0]+m.d*p[1]+m.f];
-function transform(s=''){
- let m=matrix(); const re=/(matrix|translate|scale|rotate|skewX|skewY)\s*\(([^)]*)\)/ig; let x;
- while((x=re.exec(s))){const a=x[2].trim().split(/[ ,]+/).map(Number).filter(Number.isFinite);let n=matrix();
-  if(x[1].toLowerCase()==='matrix'&&a.length>=6)n=matrix(...a.slice(0,6));
-  else if(x[1].toLowerCase()==='translate')n=matrix(1,0,0,1,a[0]||0,a[1]||0);
-  else if(x[1].toLowerCase()==='scale')n=matrix(a[0]??1,0,0,a[1]??a[0]??1,0,0);
-  else if(x[1].toLowerCase()==='rotate'){const r=(a[0]||0)*Math.PI/180,c=Math.cos(r),s=Math.sin(r),R=matrix(c,s,-s,c,0,0);n=a.length>=3?mul(mul(matrix(1,0,0,1,a[1],a[2]),R),matrix(1,0,0,1,-a[1],-a[2])):R;}
-  else if(x[1].toLowerCase()==='skewx'){const r=(a[0]||0)*Math.PI/180;n=matrix(1,0,Math.tan(r),1,0,0);}
-  else if(x[1].toLowerCase()==='skewy'){const r=(a[0]||0)*Math.PI/180;n=matrix(1,Math.tan(r),0,1,0,0);}
-  m=mul(m,n);
- } return m;
-}
-function bounds(parts){let xs=[],ys=[];for(const p of parts){if(p.type==='line'){xs.push(p.x,p.x2);ys.push(p.y,p.y2);}else if(p.type==='poly'){for(const q of p.points){xs.push(q[0]);ys.push(q[1]);}}else{xs.push(p.x,p.x+p.w);ys.push(p.y,p.y+p.h);}}return xs.length?[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]:null;}
-function normalize(raw,opts={}){raw=(raw||[]).filter(Boolean).slice(0,MAX_PARTS);let b=bounds(raw);if(!b)throw Error('No usable 2D geometry was found.');let bw=b[2]-b[0],bh=b[3]-b[1];if(bw<1e-9&&bh<1e-9)throw Error('No usable 2D geometry was found.');const pad=Math.max(.001,Math.max(bw,bh)*.02);if(bw<1e-9){b=[b[0]-pad/2,b[1],b[2]+pad/2,b[3]];bw=pad;}if(bh<1e-9){b=[b[0],b[1]-pad/2,b[2],b[3]+pad/2];bh=pad;}const sx=100/bw,sy=100/bh,s=Math.min(sx,sy),ox=(100-bw*s)/2-b[0]*s,oy=(100-bh*s)/2-b[1]*s,cv=n=>clamp(n*s,-100,200),out=raw.map(p=>{if(p.type==='line')return{type:'line',x:cv(p.x)+ox,y:cv(p.y)+oy,x2:cv(p.x2)+ox,y2:cv(p.y2)+oy,stroke:p.stroke||'ink'};if(p.type==='poly')return{type:'poly',points:p.points.slice(0,300).map(([x,y])=>[cv(x)+ox,cv(y)+oy]),fill:p.fill||'paper',stroke:p.stroke||'ink'};if(p.type==='ellipse')return{type:'ellipse',x:cv(p.x)+ox,y:cv(p.y)+oy,w:Math.max(.01,cv(p.w)),h:Math.max(.01,cv(p.h)),fill:p.fill||'paper',stroke:p.stroke||'ink'};return{type:'rect',x:cv(p.x)+ox,y:cv(p.y)+oy,w:Math.max(.01,cv(p.w)),h:Math.max(.01,cv(p.h)),fill:p.fill||'paper',stroke:p.stroke||'ink'};});
- const aspect=bw/bh;let length=opts.length,width=opts.width,needsScale=opts.needsScale!==false;if(!(length>0&&width>0)){if(aspect>=1){length=1;width=Math.max(.1,1/aspect);}else{width=1;length=Math.max(.1,aspect);}needsScale=true;}return{name:opts.name||'Imported shape',length:+length,width:+width,needsScale,parts:out,sourceFormat:opts.sourceFormat||'',sourceName:opts.sourceName||'',aspect,scaleSource:opts.scaleSource||''};}
-function lineParts(points,closed=false){const a=[];for(let i=1;i<points.length;i++)a.push({type:'line',x:points[i-1][0],y:points[i-1][1],x2:points[i][0],y2:points[i][1],stroke:'ink'});if(closed&&points.length>2)a.push({type:'line',x:points.at(-1)[0],y:points.at(-1)[1],x2:points[0][0],y2:points[0][1],stroke:'ink'});return a;}
-function parsePoints(s){const a=String(s||'').trim().split(/[\s,]+/).map(Number),p=[];for(let i=0;i+1<a.length;i+=2)if(Number.isFinite(a[i])&&Number.isFinite(a[i+1]))p.push([a[i],a[i+1]]);return p;}
-function svgPaint(el){const fill=(el.getAttribute('fill')||'').toLowerCase();return fill&&fill!=='none'?'paper':'none';}
-async function svg(text,name){const xml=new DOMParser().parseFromString(text,'image/svg+xml');if(xml.querySelector('parsererror'))throw Error('The SVG could not be parsed.');let parts=[];
- function walk(el,parent=matrix()){if(parts.length>=MAX_PARTS)return;const m=mul(parent,transform(el.getAttribute?.('transform')||'')),tag=(el.localName||'').toLowerCase(),addPoly=(points,closed,filled=false)=>{points=points.map(p=>pt(m,p));if(closed&&filled&&points.length>=3)parts.push({type:'poly',points,fill:'paper',stroke:'ink'});else parts.push(...lineParts(points,closed));};
-  if(tag==='line')addPoly([[num(el.getAttribute('x1'))||0,num(el.getAttribute('y1'))||0],[num(el.getAttribute('x2'))||0,num(el.getAttribute('y2'))||0]],false);
-  else if(tag==='rect'){const x=num(el.getAttribute('x'))||0,y=num(el.getAttribute('y'))||0,w=num(el.getAttribute('width'))||0,h=num(el.getAttribute('height'))||0;addPoly([[x,y],[x+w,y],[x+w,y+h],[x,y+h]],true,svgPaint(el)!=='none');}
-  else if(tag==='circle'||tag==='ellipse'){const cx=num(el.getAttribute('cx'))||0,cy=num(el.getAttribute('cy'))||0,rx=tag==='circle'?(num(el.getAttribute('r'))||0):(num(el.getAttribute('rx'))||0),ry=tag==='circle'?rx:(num(el.getAttribute('ry'))||0),q=Array.from({length:32},(_,i)=>[cx+rx*Math.cos(i*Math.PI*2/32),cy+ry*Math.sin(i*Math.PI*2/32)]);addPoly(q,true,svgPaint(el)!=='none');}
-  else if(tag==='polygon'||tag==='polyline')addPoly(parsePoints(el.getAttribute('points')),tag==='polygon',tag==='polygon'&&svgPaint(el)!=='none');
-  else if(tag==='path'){const d=el.getAttribute('d')||'';if(d.length<200000){try{const ns='http://www.w3.org/2000/svg',host=document.createElementNS(ns,'svg'),p=document.createElementNS(ns,'path');p.setAttribute('d',d);host.appendChild(p);host.style.cssText='position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';document.body.appendChild(host);const len=p.getTotalLength();if(len>0){const n=clamp(Math.ceil(len/8),8,80),q=Array.from({length:n+1},(_,i)=>{const z=p.getPointAtLength(len*i/n);return[z.x,z.y]});addPoly(q,/z\s*$/i.test(d.trim()),svgPaint(el)!=='none');}host.remove();}catch{}}}
-  for(const c of el.children||[])walk(c,m);
- } walk(xml.documentElement);return[normalize(parts,{name:name.replace(/\.svg$/i,''),sourceFormat:'SVG',sourceName:name})];}
-function dxf(text,name){const rows=text.replace(/\r/g,'').split('\n'),pairs=[];for(let i=0;i+1<rows.length;i+=2)pairs.push([parseInt(rows[i].trim(),10),rows[i+1].trim()]);let inEnt=false,entities=[],cur=null,insUnits=0,headerVar='';for(const [code,val]of pairs){if(code===9)headerVar=val;if(headerVar==='$INSUNITS'&&code===70){insUnits=parseInt(val,10)||0;headerVar='';}if(code===0&&val==='SECTION'){cur=null;continue;}if(code===2&&val==='ENTITIES'){inEnt=true;continue;}if(code===0&&val==='ENDSEC'){if(inEnt&&cur)entities.push(cur);cur=null;inEnt=false;continue;}if(!inEnt)continue;if(code===0){if(cur)entities.push(cur);cur={type:val,codes:[]};}else if(cur)cur.codes.push([code,val]);}if(cur&&inEnt)entities.push(cur);
- const vals=(e,c)=>e.codes.filter(x=>x[0]===c).map(x=>num(x[1])).filter(x=>x!==null),one=(e,c,d=0)=>vals(e,c)[0]??d;let parts=[];for(const e of entities){if(parts.length>=MAX_PARTS)break;if(e.type==='LINE')parts.push({type:'line',x:one(e,10),y:-one(e,20),x2:one(e,11),y2:-one(e,21),stroke:'ink'});else if(e.type==='LWPOLYLINE'){const xs=vals(e,10),ys=vals(e,20),p=xs.slice(0,ys.length).map((x,i)=>[x,-ys[i]]);parts.push(...lineParts(p,(one(e,70)&1)===1));}else if(e.type==='CIRCLE'||e.type==='ARC'){const cx=one(e,10),cy=-one(e,20),r=Math.abs(one(e,40)),start=e.type==='ARC'?one(e,50)*Math.PI/180:0,end=e.type==='ARC'?one(e,51)*Math.PI/180:Math.PI*2,span=((end-start)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)||Math.PI*2,n=clamp(Math.ceil(span/(Math.PI/12)),8,48),p=Array.from({length:n+1},(_,i)=>[cx+r*Math.cos(start+span*i/n),cy-r*Math.sin(start+span*i/n)]);parts.push(...lineParts(p,e.type==='CIRCLE'));}else if(e.type==='ELLIPSE'){const cx=one(e,10),cy=-one(e,20),mx=one(e,11),my=-one(e,21),ratio=Math.abs(one(e,40,1)),start=one(e,41),end=one(e,42,Math.PI*2),span=end-start||Math.PI*2,n=36,p=[];for(let i=0;i<=n;i++){const t=start+span*i/n;p.push([cx+mx*Math.cos(t)-my*ratio*Math.sin(t),cy+my*Math.cos(t)+mx*ratio*Math.sin(t)]);}parts.push(...lineParts(p,Math.abs(span-Math.PI*2)<.01));}}
- const unitM={1:.0254,2:.3048,4:.001,5:.01,6:1,14:.1}[insUnits],b=bounds(parts),dim=unitM&&b?{length:(b[2]-b[0])*unitM,width:(b[3]-b[1])*unitM,needsScale:false}:{needsScale:true};if(dim.length>500||dim.width>500||dim.length<.01||dim.width<.01)Object.assign(dim,{length:null,width:null,needsScale:true});return[normalize(parts,{...dim,name:name.replace(/\.dxf$/i,''),sourceFormat:'DXF',sourceName:name})];}
-async function unzip(buffer){const u=new Uint8Array(buffer),v=new DataView(buffer),sig=0x06054b50;let e=-1;for(let i=Math.max(0,u.length-65557);i<=u.length-22;i++)if(v.getUint32(i,true)===sig)e=i;if(e<0)throw Error('This Visio file is not a valid Open XML package.');const count=v.getUint16(e+10,true),offset=v.getUint32(e+16,true),files=new Map();let p=offset;for(let i=0;i<count&&p+46<=u.length;i++){if(v.getUint32(p,true)!==0x02014b50)break;const method=v.getUint16(p+10,true),size=v.getUint32(p+20,true),nl=v.getUint16(p+28,true),xl=v.getUint16(p+30,true),cl=v.getUint16(p+32,true),lo=v.getUint32(p+42,true),name=td.decode(u.slice(p+46,p+46+nl));const lnl=v.getUint16(lo+26,true),lxl=v.getUint16(lo+28,true),start=lo+30+lnl+lxl,raw=u.slice(start,start+size);let bytes;if(method===0)bytes=raw;else if(method===8){if(typeof DecompressionStream==='undefined')throw Error('This browser cannot decompress Visio stencil files.');const ds=new DecompressionStream('deflate-raw'),ab=await new Response(new Blob([raw]).stream().pipeThrough(ds)).arrayBuffer();bytes=new Uint8Array(ab);}else{p+=46+nl+xl+cl;continue;}files.set(name.replace(/^\//,''),bytes);p+=46+nl+xl+cl;}return files;}
-const children=(el,n)=>Array.from(el?.getElementsByTagName('*')||[]).filter(x=>x.localName===n);
-const directChildren=(el,n)=>Array.from(el?.children||[]).filter(x=>x.localName===n);
-const cellNode=(el,n)=>directChildren(el,'Cell').find(x=>x.getAttribute('N')===n)||null;
-const cell=(el,n,d=null)=>{const c=cellNode(el,n),v=num(c?.getAttribute('V'));return v===null?d:v;};
-const vMatrix=(shape)=>{const w=cell(shape,'Width',0)||0,h=cell(shape,'Height',0)||0,px=cell(shape,'PinX',0)||0,py=cell(shape,'PinY',0)||0,lx=cell(shape,'LocPinX',w/2)??w/2,ly=cell(shape,'LocPinY',h/2)??h/2,a=cell(shape,'Angle',0)||0,fx=(cell(shape,'FlipX',0)||0)>.5?-1:1,fy=(cell(shape,'FlipY',0)||0)>.5?-1:1,c=Math.cos(a),s=Math.sin(a);return matrix(c*fx,s*fx,-s*fy,c*fy,px-(c*fx*lx-s*fy*ly),py-(s*fx*lx+c*fy*ly));};
-function quad(a,b,c,n=10){const out=[];for(let i=1;i<=n;i++){const t=i/n,u=1-t;out.push([u*u*a[0]+2*u*t*b[0]+t*t*c[0],u*u*a[1]+2*u*t*b[1]+t*t*c[1]])}return out;}
-function cubic(a,b,c,d,n=12){const out=[];for(let i=1;i<=n;i++){const t=i/n,u=1-t;out.push([u*u*u*a[0]+3*u*u*t*b[0]+3*u*t*t*c[0]+t*t*t*d[0],u*u*u*a[1]+3*u*u*t*b[1]+3*u*t*t*c[1]+t*t*t*d[1]])}return out;}
-function visioGeometry(xml){
- const doc=new DOMParser().parseFromString(xml,'application/xml');if(doc.querySelector('parsererror'))return[];let parts=[];
- function walk(shape,parent=matrix()){
-  if(parts.length>=MAX_PARTS)return;const m=mul(parent,vMatrix(shape)),W=cell(shape,'Width',1)||1,H=cell(shape,'Height',1)||1,before=parts.length;let hasChild=false;
-  for(const section of directChildren(shape,'Section').filter(s=>s.getAttribute('N')==='Geometry')){
-   if((cell(section,'NoShow',0)||0)>.5)continue;let path=[],cur=null,start=null;
-   const flush=(close=false)=>{if(path.length>1){if(close&&Math.hypot(path[0][0]-path.at(-1)[0],path[0][1]-path.at(-1)[1])>1e-8)path.push(path[0]);parts.push(...lineParts(path,false));}path=[];cur=null;start=null;};
-   for(const row of directChildren(section,'Row')){
-    if(parts.length>=MAX_PARTS)break;const t=(row.getAttribute('T')||'').toLowerCase(),rv=n=>cell(row,n,null),add=q=>{cur=q;path.push(pt(m,q));};
-    if(t==='moveto'||t==='relmoveto'){flush();let x=rv('X')??0,y=rv('Y')??0;if(t==='relmoveto'){x*=W;y*=H;}cur=[x,y];start=cur.slice();path=[pt(m,cur)];}
-    else if(t==='lineto'||t==='polylineto'||t==='rellineto'){let x=rv('X')??0,y=rv('Y')??0;if(t==='rellineto'){x*=W;y*=H;}add([x,y]);}
-    else if(t==='relcubbezto'&&cur){const end=[(rv('X')??0)*W,(rv('Y')??0)*H],c1=[(rv('A')??0)*W,(rv('B')??0)*H],c2=[(rv('C')??0)*W,(rv('D')??0)*H];for(const q of cubic(cur,c1,c2,end,10))path.push(pt(m,q));cur=end;}
-    else if(t==='ellipticalarcto'&&cur){const end=[rv('X')??cur[0],rv('Y')??cur[1]],ctl=[rv('A')??((cur[0]+end[0])/2),rv('B')??((cur[1]+end[1])/2)];for(const q of quad(cur,ctl,end,12))path.push(pt(m,q));cur=end;}
-    else if(t==='arcto'&&cur){const end=[rv('X')??cur[0],rv('Y')??cur[1]],bow=rv('A')||0,mid=[(cur[0]+end[0])/2,(cur[1]+end[1])/2],dx=end[0]-cur[0],dy=end[1]-cur[1],d=Math.hypot(dx,dy)||1,ctl=[mid[0]-dy/d*bow*2,mid[1]+dx/d*bow*2];for(const q of quad(cur,ctl,end,10))path.push(pt(m,q));cur=end;}
-    else if(t==='ellipse'){flush();const cx=rv('X')??W/2,cy=rv('Y')??H/2,a=rv('A'),b=rv('B'),rx=Math.abs((a??(cx-W/2))-cx)||W/2,ry=Math.abs((b??(cy-H/2))-cy)||H/2,q=Array.from({length:33},(_,i)=>pt(m,[cx+rx*Math.cos(i*Math.PI*2/32),cy+ry*Math.sin(i*Math.PI*2/32)]));parts.push(...lineParts(q,false));}
-   }
-   flush();
+(function (root) {
+  "use strict";
+  const td = new TextDecoder();
+  const MAX_PARTS = 500,
+    MAX_ASSETS = 250;
+  const num = (v) => {
+    const n = parseFloat(String(v ?? "").replace(",", "."));
+    return Number.isFinite(n) ? n : null;
+  };
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const matrix = (a = 1, b = 0, c = 0, d = 1, e = 0, f = 0) => ({
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+  });
+  const mul = (m, n) =>
+    matrix(
+      m.a * n.a + m.c * n.b,
+      m.b * n.a + m.d * n.b,
+      m.a * n.c + m.c * n.d,
+      m.b * n.c + m.d * n.d,
+      m.a * n.e + m.c * n.f + m.e,
+      m.b * n.e + m.d * n.f + m.f,
+    );
+  const pt = (m, p) => [
+    m.a * p[0] + m.c * p[1] + m.e,
+    m.b * p[0] + m.d * p[1] + m.f,
+  ];
+  function transform(s = "") {
+    let m = matrix();
+    const re = /(matrix|translate|scale|rotate|skewX|skewY)\s*\(([^)]*)\)/gi;
+    let x;
+    while ((x = re.exec(s))) {
+      const a = x[2].trim().split(/[ ,]+/).map(Number).filter(Number.isFinite);
+      let n = matrix();
+      if (x[1].toLowerCase() === "matrix" && a.length >= 6)
+        n = matrix(...a.slice(0, 6));
+      else if (x[1].toLowerCase() === "translate")
+        n = matrix(1, 0, 0, 1, a[0] || 0, a[1] || 0);
+      else if (x[1].toLowerCase() === "scale")
+        n = matrix(a[0] ?? 1, 0, 0, a[1] ?? a[0] ?? 1, 0, 0);
+      else if (x[1].toLowerCase() === "rotate") {
+        const r = ((a[0] || 0) * Math.PI) / 180,
+          c = Math.cos(r),
+          s = Math.sin(r),
+          R = matrix(c, s, -s, c, 0, 0);
+        n =
+          a.length >= 3
+            ? mul(
+                mul(matrix(1, 0, 0, 1, a[1], a[2]), R),
+                matrix(1, 0, 0, 1, -a[1], -a[2]),
+              )
+            : R;
+      } else if (x[1].toLowerCase() === "skewx") {
+        const r = ((a[0] || 0) * Math.PI) / 180;
+        n = matrix(1, 0, Math.tan(r), 1, 0, 0);
+      } else if (x[1].toLowerCase() === "skewy") {
+        const r = ((a[0] || 0) * Math.PI) / 180;
+        n = matrix(1, Math.tan(r), 0, 1, 0, 0);
+      }
+      m = mul(m, n);
+    }
+    return m;
   }
-  for(const shapes of directChildren(shape,'Shapes'))for(const child of directChildren(shapes,'Shape')){hasChild=true;walk(child,m);}
-  // A number of Visio plan symbols are image/group leaves with no explicit supported Geometry rows.
-  // Keep their real 2D footprint instead of rejecting the master as "no 2D shape".
-  if(!hasChild&&parts.length===before&&W>1e-8&&H>1e-8){const q=[[0,0],[W,0],[W,H],[0,H],[0,0]].map(v=>pt(m,v));parts.push(...lineParts(q,false));}
- }
- for(const shapes of directChildren(doc.documentElement,'Shapes'))for(const shape of directChildren(shapes,'Shape'))walk(shape);return parts.slice(0,MAX_PARTS);
-}
-function visioMasterDimensions(xml,parts){const b=bounds(parts);if(!b)return null;const inch=.0254,length=(b[2]-b[0])*inch,width=(b[3]-b[1])*inch;if(!(length>1e-5&&width>1e-5&&length<=500&&width<=500))return null;return{length,width,needsScale:false};}
-async function visio(buffer,name){
- const z=await unzip(buffer),assets=[],masters=z.get('visio/masters/masters.xml'),rels=z.get('visio/masters/_rels/masters.xml.rels'),meta=new Map(),targets=new Map();
- if(masters){const d=new DOMParser().parseFromString(td.decode(masters),'application/xml');for(const m of children(d,'Master')){const id=m.getAttribute('ID'),nm=m.getAttribute('Name')||m.getAttribute('NameU')||('Master '+id),prompt=m.getAttribute('Prompt')||'',rel=directChildren(m,'Rel')[0],rid=rel?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id')||rel?.getAttribute('r:id');if(rid)meta.set(rid,{name:nm,prompt,id});}}
- if(rels){const d=new DOMParser().parseFromString(td.decode(rels),'application/xml');for(const r of children(d,'Relationship'))targets.set(r.getAttribute('Id'),r.getAttribute('Target'));}
- for(const [rid,target]of targets){if(assets.length>=MAX_ASSETS)break;const clean=('visio/masters/'+String(target).replace(/^\.\//,'')).replace('/masters/masters/','/masters/'),bytes=z.get(clean);if(!bytes)continue;const parts=visioGeometry(td.decode(bytes));if(!parts.length)continue;const info=meta.get(rid)||{},dim=visioMasterDimensions(td.decode(bytes),parts)||{needsScale:true};assets.push(normalize(parts,{...dim,name:info.name||target.replace(/\.xml$/,''),sourceFormat:'Visio',sourceName:name}));}
- if(!assets.length){for(const [path,bytes]of z){if(assets.length>=MAX_ASSETS)break;if(!/^visio\/(masters\/master|pages\/page)\d+\.xml$/i.test(path))continue;const parts=visioGeometry(td.decode(bytes));if(!parts.length)continue;const dim=visioMasterDimensions(td.decode(bytes),parts)||{needsScale:true};assets.push(normalize(parts,{...dim,name:path.split('/').at(-1).replace(/\.xml$/i,''),sourceFormat:'Visio',sourceName:name}));}}
- if(!assets.length)throw Error('No supported 2D master geometry was found in this Visio file.');return assets;
-}
-function jsonPack(text,name){const d=JSON.parse(text),a=Array.isArray(d)?d:d.assets;if(!Array.isArray(a))throw Error('This JSON file is not a SAMI shape pack.');return a.slice(0,MAX_ASSETS).map((x,i)=>{const parts=Array.isArray(x.parts)?x.parts:JSON.parse(x.symbolPartsJSON||'[]');if(!root.SAMISymbols?.validParts(parts))throw Error('Shape '+(i+1)+' contains invalid geometry.');return{name:String(x.name||('Imported shape '+(i+1))).slice(0,100),length:clamp(+x.length||1,.1,500),width:clamp(+x.width||1,.1,500),needsScale:!!x.needsScale,parts,sourceFormat:'SAMI shape pack',sourceName:name};});}
-async function parse(file){if(!file)throw Error('Choose a shape file.');if(file.size>25*1024*1024)throw Error('Choose a shape pack smaller than 25 MB.');const n=file.name||'shape',ext=n.toLowerCase().split('.').pop();if(ext==='svg')return svg(await file.text(),n);if(ext==='dxf')return dxf(await file.text(),n);if(ext==='vssx'||ext==='vsdx')return visio(await file.arrayBuffer(),n);if(ext==='json'||ext==='sami-shapes')return jsonPack(await file.text(),n);throw Error('Use SVG, ASCII DXF, VSSX/VSDX or a SAMI shape pack.');}
-function exportPack(assets){return JSON.stringify({samiShapePack:1,exportedAt:new Date().toISOString(),assets:(assets||[]).map(a=>({name:a.name,length:a.length,width:a.width,needsScale:!!a.needsScale,parts:JSON.parse(a.symbolPartsJSON||'[]')}))},null,2);}
-root.SAMIShapeImport={parse,exportPack,normalize,dxf,jsonPack,MAX_ASSETS,MAX_PARTS};
-})(typeof window!=='undefined'?window:globalThis);
+  function bounds(parts) {
+    let xs = [],
+      ys = [];
+    for (const p of parts) {
+      if (p.type === "line") {
+        xs.push(p.x, p.x2);
+        ys.push(p.y, p.y2);
+      } else if (p.type === "poly") {
+        for (const q of p.points) {
+          xs.push(q[0]);
+          ys.push(q[1]);
+        }
+      } else {
+        xs.push(p.x, p.x + p.w);
+        ys.push(p.y, p.y + p.h);
+      }
+    }
+    return xs.length
+      ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]
+      : null;
+  }
+  function normalize(raw, opts = {}) {
+    raw = (raw || []).filter(Boolean).slice(0, MAX_PARTS);
+    let b = bounds(raw);
+    if (!b) throw Error("No usable 2D geometry was found.");
+    let bw = b[2] - b[0],
+      bh = b[3] - b[1];
+    if (bw < 1e-9 && bh < 1e-9) throw Error("No usable 2D geometry was found.");
+    const pad = Math.max(0.001, Math.max(bw, bh) * 0.02);
+    if (bw < 1e-9) {
+      b = [b[0] - pad / 2, b[1], b[2] + pad / 2, b[3]];
+      bw = pad;
+    }
+    if (bh < 1e-9) {
+      b = [b[0], b[1] - pad / 2, b[2], b[3] + pad / 2];
+      bh = pad;
+    }
+    const sx = 100 / bw,
+      sy = 100 / bh,
+      s = Math.min(sx, sy),
+      ox = (100 - bw * s) / 2 - b[0] * s,
+      oy = (100 - bh * s) / 2 - b[1] * s,
+      cv = (n) => clamp(n * s, -100, 200),
+      out = raw.map((p) => {
+        if (p.type === "line")
+          return {
+            type: "line",
+            x: cv(p.x) + ox,
+            y: cv(p.y) + oy,
+            x2: cv(p.x2) + ox,
+            y2: cv(p.y2) + oy,
+            stroke: p.stroke || "ink",
+          };
+        if (p.type === "poly")
+          return {
+            type: "poly",
+            points: p.points
+              .slice(0, 300)
+              .map(([x, y]) => [cv(x) + ox, cv(y) + oy]),
+            fill: p.fill || "paper",
+            stroke: p.stroke || "ink",
+          };
+        if (p.type === "ellipse")
+          return {
+            type: "ellipse",
+            x: cv(p.x) + ox,
+            y: cv(p.y) + oy,
+            w: Math.max(0.01, cv(p.w)),
+            h: Math.max(0.01, cv(p.h)),
+            fill: p.fill || "paper",
+            stroke: p.stroke || "ink",
+          };
+        return {
+          type: "rect",
+          x: cv(p.x) + ox,
+          y: cv(p.y) + oy,
+          w: Math.max(0.01, cv(p.w)),
+          h: Math.max(0.01, cv(p.h)),
+          fill: p.fill || "paper",
+          stroke: p.stroke || "ink",
+        };
+      });
+    const aspect = bw / bh;
+    let length = opts.length,
+      width = opts.width,
+      needsScale = opts.needsScale !== false;
+    if (!(length > 0 && width > 0)) {
+      if (aspect >= 1) {
+        length = 1;
+        width = Math.max(0.1, 1 / aspect);
+      } else {
+        width = 1;
+        length = Math.max(0.1, aspect);
+      }
+      needsScale = true;
+    }
+    return {
+      name: opts.name || "Imported shape",
+      length: +length,
+      width: +width,
+      needsScale,
+      parts: out,
+      sourceFormat: opts.sourceFormat || "",
+      sourceName: opts.sourceName || "",
+      aspect,
+      scaleSource: opts.scaleSource || "",
+    };
+  }
+  function lineParts(points, closed = false) {
+    const a = [];
+    for (let i = 1; i < points.length; i++)
+      a.push({
+        type: "line",
+        x: points[i - 1][0],
+        y: points[i - 1][1],
+        x2: points[i][0],
+        y2: points[i][1],
+        stroke: "ink",
+      });
+    if (closed && points.length > 2)
+      a.push({
+        type: "line",
+        x: points.at(-1)[0],
+        y: points.at(-1)[1],
+        x2: points[0][0],
+        y2: points[0][1],
+        stroke: "ink",
+      });
+    return a;
+  }
+  function parsePoints(s) {
+    const a = String(s || "")
+        .trim()
+        .split(/[\s,]+/)
+        .map(Number),
+      p = [];
+    for (let i = 0; i + 1 < a.length; i += 2)
+      if (Number.isFinite(a[i]) && Number.isFinite(a[i + 1]))
+        p.push([a[i], a[i + 1]]);
+    return p;
+  }
+  function svgPaint(el) {
+    const fill = (el.getAttribute("fill") || "").toLowerCase();
+    return fill && fill !== "none" ? "paper" : "none";
+  }
+  async function svg(text, name) {
+    const xml = new DOMParser().parseFromString(text, "image/svg+xml");
+    if (xml.querySelector("parsererror"))
+      throw Error("The SVG could not be parsed.");
+    let parts = [];
+    function walk(el, parent = matrix()) {
+      if (parts.length >= MAX_PARTS) return;
+      const m = mul(parent, transform(el.getAttribute?.("transform") || "")),
+        tag = (el.localName || "").toLowerCase(),
+        addPoly = (points, closed, filled = false) => {
+          points = points.map((p) => pt(m, p));
+          if (closed && filled && points.length >= 3)
+            parts.push({ type: "poly", points, fill: "paper", stroke: "ink" });
+          else parts.push(...lineParts(points, closed));
+        };
+      if (tag === "line")
+        addPoly(
+          [
+            [num(el.getAttribute("x1")) || 0, num(el.getAttribute("y1")) || 0],
+            [num(el.getAttribute("x2")) || 0, num(el.getAttribute("y2")) || 0],
+          ],
+          false,
+        );
+      else if (tag === "rect") {
+        const x = num(el.getAttribute("x")) || 0,
+          y = num(el.getAttribute("y")) || 0,
+          w = num(el.getAttribute("width")) || 0,
+          h = num(el.getAttribute("height")) || 0;
+        addPoly(
+          [
+            [x, y],
+            [x + w, y],
+            [x + w, y + h],
+            [x, y + h],
+          ],
+          true,
+          svgPaint(el) !== "none",
+        );
+      } else if (tag === "circle" || tag === "ellipse") {
+        const cx = num(el.getAttribute("cx")) || 0,
+          cy = num(el.getAttribute("cy")) || 0,
+          rx =
+            tag === "circle"
+              ? num(el.getAttribute("r")) || 0
+              : num(el.getAttribute("rx")) || 0,
+          ry = tag === "circle" ? rx : num(el.getAttribute("ry")) || 0,
+          q = Array.from({ length: 32 }, (_, i) => [
+            cx + rx * Math.cos((i * Math.PI * 2) / 32),
+            cy + ry * Math.sin((i * Math.PI * 2) / 32),
+          ]);
+        addPoly(q, true, svgPaint(el) !== "none");
+      } else if (tag === "polygon" || tag === "polyline")
+        addPoly(
+          parsePoints(el.getAttribute("points")),
+          tag === "polygon",
+          tag === "polygon" && svgPaint(el) !== "none",
+        );
+      else if (tag === "path") {
+        const d = el.getAttribute("d") || "";
+        if (d.length < 200000) {
+          try {
+            const ns = "http://www.w3.org/2000/svg",
+              host = document.createElementNS(ns, "svg"),
+              p = document.createElementNS(ns, "path");
+            p.setAttribute("d", d);
+            host.appendChild(p);
+            host.style.cssText =
+              "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none";
+            document.body.appendChild(host);
+            const len = p.getTotalLength();
+            if (len > 0) {
+              const n = clamp(Math.ceil(len / 8), 8, 80),
+                q = Array.from({ length: n + 1 }, (_, i) => {
+                  const z = p.getPointAtLength((len * i) / n);
+                  return [z.x, z.y];
+                });
+              addPoly(q, /z\s*$/i.test(d.trim()), svgPaint(el) !== "none");
+            }
+            host.remove();
+          } catch {}
+        }
+      }
+      for (const c of el.children || []) walk(c, m);
+    }
+    walk(xml.documentElement);
+    return [
+      normalize(parts, {
+        name: name.replace(/\.svg$/i, ""),
+        sourceFormat: "SVG",
+        sourceName: name,
+      }),
+    ];
+  }
+  function dxf(text, name) {
+    const rows = text.replace(/\r/g, "").split("\n"),
+      pairs = [];
+    for (let i = 0; i + 1 < rows.length; i += 2)
+      pairs.push([parseInt(rows[i].trim(), 10), rows[i + 1].trim()]);
+    let inEnt = false,
+      entities = [],
+      cur = null,
+      insUnits = 0,
+      headerVar = "";
+    for (const [code, val] of pairs) {
+      if (code === 9) headerVar = val;
+      if (headerVar === "$INSUNITS" && code === 70) {
+        insUnits = parseInt(val, 10) || 0;
+        headerVar = "";
+      }
+      if (code === 0 && val === "SECTION") {
+        cur = null;
+        continue;
+      }
+      if (code === 2 && val === "ENTITIES") {
+        inEnt = true;
+        continue;
+      }
+      if (code === 0 && val === "ENDSEC") {
+        if (inEnt && cur) entities.push(cur);
+        cur = null;
+        inEnt = false;
+        continue;
+      }
+      if (!inEnt) continue;
+      if (code === 0) {
+        if (cur) entities.push(cur);
+        cur = { type: val, codes: [] };
+      } else if (cur) cur.codes.push([code, val]);
+    }
+    if (cur && inEnt) entities.push(cur);
+    const vals = (e, c) =>
+        e.codes
+          .filter((x) => x[0] === c)
+          .map((x) => num(x[1]))
+          .filter((x) => x !== null),
+      one = (e, c, d = 0) => vals(e, c)[0] ?? d;
+    let parts = [];
+    for (const e of entities) {
+      if (parts.length >= MAX_PARTS) break;
+      if (e.type === "LINE")
+        parts.push({
+          type: "line",
+          x: one(e, 10),
+          y: -one(e, 20),
+          x2: one(e, 11),
+          y2: -one(e, 21),
+          stroke: "ink",
+        });
+      else if (e.type === "LWPOLYLINE") {
+        const xs = vals(e, 10),
+          ys = vals(e, 20),
+          p = xs.slice(0, ys.length).map((x, i) => [x, -ys[i]]);
+        parts.push(...lineParts(p, (one(e, 70) & 1) === 1));
+      } else if (e.type === "CIRCLE" || e.type === "ARC") {
+        const cx = one(e, 10),
+          cy = -one(e, 20),
+          r = Math.abs(one(e, 40)),
+          start = e.type === "ARC" ? (one(e, 50) * Math.PI) / 180 : 0,
+          end = e.type === "ARC" ? (one(e, 51) * Math.PI) / 180 : Math.PI * 2,
+          span =
+            (((end - start) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2) ||
+            Math.PI * 2,
+          n = clamp(Math.ceil(span / (Math.PI / 12)), 8, 48),
+          p = Array.from({ length: n + 1 }, (_, i) => [
+            cx + r * Math.cos(start + (span * i) / n),
+            cy - r * Math.sin(start + (span * i) / n),
+          ]);
+        parts.push(...lineParts(p, e.type === "CIRCLE"));
+      } else if (e.type === "ELLIPSE") {
+        const cx = one(e, 10),
+          cy = -one(e, 20),
+          mx = one(e, 11),
+          my = -one(e, 21),
+          ratio = Math.abs(one(e, 40, 1)),
+          start = one(e, 41),
+          end = one(e, 42, Math.PI * 2),
+          span = end - start || Math.PI * 2,
+          n = 36,
+          p = [];
+        for (let i = 0; i <= n; i++) {
+          const t = start + (span * i) / n;
+          p.push([
+            cx + mx * Math.cos(t) - my * ratio * Math.sin(t),
+            cy + my * Math.cos(t) + mx * ratio * Math.sin(t),
+          ]);
+        }
+        parts.push(...lineParts(p, Math.abs(span - Math.PI * 2) < 0.01));
+      }
+    }
+    const unitM = { 1: 0.0254, 2: 0.3048, 4: 0.001, 5: 0.01, 6: 1, 14: 0.1 }[
+        insUnits
+      ],
+      b = bounds(parts),
+      dim =
+        unitM && b
+          ? {
+              length: (b[2] - b[0]) * unitM,
+              width: (b[3] - b[1]) * unitM,
+              needsScale: false,
+            }
+          : { needsScale: true };
+    if (
+      dim.length > 500 ||
+      dim.width > 500 ||
+      dim.length < 0.01 ||
+      dim.width < 0.01
+    )
+      Object.assign(dim, { length: null, width: null, needsScale: true });
+    return [
+      normalize(parts, {
+        ...dim,
+        name: name.replace(/\.dxf$/i, ""),
+        sourceFormat: "DXF",
+        sourceName: name,
+      }),
+    ];
+  }
+  async function unzip(buffer, opts = {}) {
+    const u = new Uint8Array(buffer),
+      v = new DataView(buffer),
+      sig = 0x06054b50,
+      label = opts.label || "Open XML",
+      maxEntries = opts.maxEntries || 2000,
+      maxExpandedBytes = opts.maxExpandedBytes || 80 * 1024 * 1024;
+    let e = -1;
+    for (let i = Math.max(0, u.length - 65557); i <= u.length - 22; i++)
+      if (v.getUint32(i, true) === sig) e = i;
+    if (e < 0) throw Error("This " + label + " file is not a valid ZIP package.");
+    const count = v.getUint16(e + 10, true),
+      offset = v.getUint32(e + 16, true),
+      files = new Map();
+    if (count > maxEntries)
+      throw Error("This " + label + " contains too many files.");
+    if (offset >= u.length)
+      throw Error("This " + label + " package directory is invalid.");
+    let p = offset;
+    let expanded = 0;
+    for (let i = 0; i < count && p + 46 <= u.length; i++) {
+      if (v.getUint32(p, true) !== 0x02014b50)
+        throw Error("This " + label + " package directory is damaged.");
+      const method = v.getUint16(p + 10, true),
+        size = v.getUint32(p + 20, true),
+        expandedSize = v.getUint32(p + 24, true),
+        nl = v.getUint16(p + 28, true),
+        xl = v.getUint16(p + 30, true),
+        cl = v.getUint16(p + 32, true),
+        lo = v.getUint32(p + 42, true),
+        name = td.decode(u.slice(p + 46, p + 46 + nl));
+      if (
+        !name ||
+        name.includes("\0") ||
+        name.replace(/\\/g, "/").split("/").includes("..")
+      )
+        throw Error("This " + label + " contains an unsafe file path.");
+      expanded += expandedSize;
+      if (expanded > maxExpandedBytes)
+        throw Error("This " + label + " expands beyond the safe size limit.");
+      if (lo + 30 > u.length || v.getUint32(lo, true) !== 0x04034b50)
+        throw Error("This " + label + " contains a damaged file entry.");
+      const lnl = v.getUint16(lo + 26, true),
+        lxl = v.getUint16(lo + 28, true),
+        start = lo + 30 + lnl + lxl,
+        raw = u.slice(start, start + size);
+      if (start + size > u.length)
+        throw Error("This " + label + " contains a truncated file entry.");
+      let bytes;
+      if (method === 0) bytes = raw;
+      else if (method === 8) {
+        if (typeof DecompressionStream === "undefined")
+          throw Error("This browser cannot decompress " + label + " files.");
+        const ds = new DecompressionStream("deflate-raw"),
+          ab = await new Response(
+            new Blob([raw]).stream().pipeThrough(ds),
+          ).arrayBuffer();
+        bytes = new Uint8Array(ab);
+      } else {
+        p += 46 + nl + xl + cl;
+        continue;
+      }
+      if (bytes.byteLength > expandedSize) {
+        expanded += bytes.byteLength - expandedSize;
+        if (expanded > maxExpandedBytes)
+          throw Error("This " + label + " expands beyond the safe size limit.");
+      }
+      files.set(name.replace(/^\//, ""), bytes);
+      p += 46 + nl + xl + cl;
+    }
+    return files;
+  }
+  const children = (el, n) =>
+    Array.from(el?.getElementsByTagName("*") || []).filter(
+      (x) => x.localName === n,
+    );
+  const directChildren = (el, n) =>
+    Array.from(el?.children || []).filter((x) => x.localName === n);
+  const cellNode = (el, n) =>
+    directChildren(el, "Cell").find((x) => x.getAttribute("N") === n) || null;
+  const cell = (el, n, d = null) => {
+    const c = cellNode(el, n),
+      v = num(c?.getAttribute("V"));
+    return v === null ? d : v;
+  };
+  const vMatrix = (shape) => {
+    const w = cell(shape, "Width", 0) || 0,
+      h = cell(shape, "Height", 0) || 0,
+      px = cell(shape, "PinX", 0) || 0,
+      py = cell(shape, "PinY", 0) || 0,
+      lx = cell(shape, "LocPinX", w / 2) ?? w / 2,
+      ly = cell(shape, "LocPinY", h / 2) ?? h / 2,
+      a = cell(shape, "Angle", 0) || 0,
+      fx = (cell(shape, "FlipX", 0) || 0) > 0.5 ? -1 : 1,
+      fy = (cell(shape, "FlipY", 0) || 0) > 0.5 ? -1 : 1,
+      c = Math.cos(a),
+      s = Math.sin(a);
+    return matrix(
+      c * fx,
+      s * fx,
+      -s * fy,
+      c * fy,
+      px - (c * fx * lx - s * fy * ly),
+      py - (s * fx * lx + c * fy * ly),
+    );
+  };
+  function quad(a, b, c, n = 10) {
+    const out = [];
+    for (let i = 1; i <= n; i++) {
+      const t = i / n,
+        u = 1 - t;
+      out.push([
+        u * u * a[0] + 2 * u * t * b[0] + t * t * c[0],
+        u * u * a[1] + 2 * u * t * b[1] + t * t * c[1],
+      ]);
+    }
+    return out;
+  }
+  function cubic(a, b, c, d, n = 12) {
+    const out = [];
+    for (let i = 1; i <= n; i++) {
+      const t = i / n,
+        u = 1 - t;
+      out.push([
+        u * u * u * a[0] +
+          3 * u * u * t * b[0] +
+          3 * u * t * t * c[0] +
+          t * t * t * d[0],
+        u * u * u * a[1] +
+          3 * u * u * t * b[1] +
+          3 * u * t * t * c[1] +
+          t * t * t * d[1],
+      ]);
+    }
+    return out;
+  }
+  function visioGeometry(xml) {
+    const doc = new DOMParser().parseFromString(xml, "application/xml");
+    if (doc.querySelector("parsererror")) return [];
+    let parts = [];
+    function walk(shape, parent = matrix()) {
+      if (parts.length >= MAX_PARTS) return;
+      const m = mul(parent, vMatrix(shape)),
+        W = cell(shape, "Width", 1) || 1,
+        H = cell(shape, "Height", 1) || 1,
+        before = parts.length;
+      let hasChild = false;
+      for (const section of directChildren(shape, "Section").filter(
+        (s) => s.getAttribute("N") === "Geometry",
+      )) {
+        if ((cell(section, "NoShow", 0) || 0) > 0.5) continue;
+        let path = [],
+          cur = null,
+          start = null;
+        const flush = (close = false) => {
+          if (path.length > 1) {
+            if (
+              close &&
+              Math.hypot(
+                path[0][0] - path.at(-1)[0],
+                path[0][1] - path.at(-1)[1],
+              ) > 1e-8
+            )
+              path.push(path[0]);
+            parts.push(...lineParts(path, false));
+          }
+          path = [];
+          cur = null;
+          start = null;
+        };
+        for (const row of directChildren(section, "Row")) {
+          if (parts.length >= MAX_PARTS) break;
+          const t = (row.getAttribute("T") || "").toLowerCase(),
+            rv = (n) => cell(row, n, null),
+            add = (q) => {
+              cur = q;
+              path.push(pt(m, q));
+            };
+          if (t === "moveto" || t === "relmoveto") {
+            flush();
+            let x = rv("X") ?? 0,
+              y = rv("Y") ?? 0;
+            if (t === "relmoveto") {
+              x *= W;
+              y *= H;
+            }
+            cur = [x, y];
+            start = cur.slice();
+            path = [pt(m, cur)];
+          } else if (
+            t === "lineto" ||
+            t === "polylineto" ||
+            t === "rellineto"
+          ) {
+            let x = rv("X") ?? 0,
+              y = rv("Y") ?? 0;
+            if (t === "rellineto") {
+              x *= W;
+              y *= H;
+            }
+            add([x, y]);
+          } else if (t === "relcubbezto" && cur) {
+            const end = [(rv("X") ?? 0) * W, (rv("Y") ?? 0) * H],
+              c1 = [(rv("A") ?? 0) * W, (rv("B") ?? 0) * H],
+              c2 = [(rv("C") ?? 0) * W, (rv("D") ?? 0) * H];
+            for (const q of cubic(cur, c1, c2, end, 10)) path.push(pt(m, q));
+            cur = end;
+          } else if (t === "ellipticalarcto" && cur) {
+            const end = [rv("X") ?? cur[0], rv("Y") ?? cur[1]],
+              ctl = [
+                rv("A") ?? (cur[0] + end[0]) / 2,
+                rv("B") ?? (cur[1] + end[1]) / 2,
+              ];
+            for (const q of quad(cur, ctl, end, 12)) path.push(pt(m, q));
+            cur = end;
+          } else if (t === "arcto" && cur) {
+            const end = [rv("X") ?? cur[0], rv("Y") ?? cur[1]],
+              bow = rv("A") || 0,
+              mid = [(cur[0] + end[0]) / 2, (cur[1] + end[1]) / 2],
+              dx = end[0] - cur[0],
+              dy = end[1] - cur[1],
+              d = Math.hypot(dx, dy) || 1,
+              ctl = [mid[0] - (dy / d) * bow * 2, mid[1] + (dx / d) * bow * 2];
+            for (const q of quad(cur, ctl, end, 10)) path.push(pt(m, q));
+            cur = end;
+          } else if (t === "ellipse") {
+            flush();
+            const cx = rv("X") ?? W / 2,
+              cy = rv("Y") ?? H / 2,
+              a = rv("A"),
+              b = rv("B"),
+              rx = Math.abs((a ?? cx - W / 2) - cx) || W / 2,
+              ry = Math.abs((b ?? cy - H / 2) - cy) || H / 2,
+              q = Array.from({ length: 33 }, (_, i) =>
+                pt(m, [
+                  cx + rx * Math.cos((i * Math.PI * 2) / 32),
+                  cy + ry * Math.sin((i * Math.PI * 2) / 32),
+                ]),
+              );
+            parts.push(...lineParts(q, false));
+          }
+        }
+        flush();
+      }
+      for (const shapes of directChildren(shape, "Shapes"))
+        for (const child of directChildren(shapes, "Shape")) {
+          hasChild = true;
+          walk(child, m);
+        }
+      // A number of Visio plan symbols are image/group leaves with no explicit supported Geometry rows.
+      // Keep their real 2D footprint instead of rejecting the master as "no 2D shape".
+      if (!hasChild && parts.length === before && W > 1e-8 && H > 1e-8) {
+        const q = [
+          [0, 0],
+          [W, 0],
+          [W, H],
+          [0, H],
+          [0, 0],
+        ].map((v) => pt(m, v));
+        parts.push(...lineParts(q, false));
+      }
+    }
+    for (const shapes of directChildren(doc.documentElement, "Shapes"))
+      for (const shape of directChildren(shapes, "Shape")) walk(shape);
+    return parts.slice(0, MAX_PARTS);
+  }
+  function visioMasterDimensions(xml, parts) {
+    const b = bounds(parts);
+    if (!b) return null;
+    const inch = 0.0254,
+      length = (b[2] - b[0]) * inch,
+      width = (b[3] - b[1]) * inch;
+    if (!(length > 1e-5 && width > 1e-5 && length <= 500 && width <= 500))
+      return null;
+    return { length, width, needsScale: false };
+  }
+  const vdxValue = (root, name, fallback = 0) => {
+    const value = num(directChildren(root, name)[0]?.textContent);
+    return value === null ? fallback : value;
+  };
+  function vdxGeometry(container) {
+    let parts = [];
+    function shapeMatrix(shape) {
+      const form = directChildren(shape, "XForm")[0] || shape,
+        width = vdxValue(form, "Width", 1) || 1,
+        height = vdxValue(form, "Height", 1) || 1,
+        pinX = vdxValue(form, "PinX", 0),
+        pinY = vdxValue(form, "PinY", 0),
+        locX = vdxValue(form, "LocPinX", width / 2),
+        locY = vdxValue(form, "LocPinY", height / 2),
+        angle = vdxValue(form, "Angle", 0),
+        flipX = vdxValue(form, "FlipX", 0) > 0.5 ? -1 : 1,
+        flipY = vdxValue(form, "FlipY", 0) > 0.5 ? -1 : 1,
+        cosine = Math.cos(angle),
+        sine = Math.sin(angle);
+      return {
+        width,
+        height,
+        transform: matrix(
+          cosine * flipX,
+          sine * flipX,
+          -sine * flipY,
+          cosine * flipY,
+          pinX - (cosine * flipX * locX - sine * flipY * locY),
+          pinY - (sine * flipX * locX + cosine * flipY * locY),
+        ),
+      };
+    }
+    function walk(shape, parent = matrix()) {
+      if (parts.length >= MAX_PARTS) return;
+      const form = shapeMatrix(shape),
+        currentMatrix = mul(parent, form.transform),
+        before = parts.length;
+      for (const geometry of directChildren(shape, "Geom")) {
+        let path = [],
+          current = null;
+        const flush = (closed = false) => {
+          if (path.length > 1) parts.push(...lineParts(path, closed));
+          path = [];
+          current = null;
+        };
+        for (const row of Array.from(geometry.children || [])) {
+          const type = row.localName.toLowerCase(),
+            x = vdxValue(row, "X", 0),
+            y = vdxValue(row, "Y", 0);
+          if (type === "moveto" || type === "relmoveto") {
+            flush();
+            current =
+              type === "relmoveto"
+                ? [x * form.width, y * form.height]
+                : [x, y];
+            path = [pt(currentMatrix, current)];
+          } else if (
+            type === "lineto" ||
+            type === "polylineto" ||
+            type === "rellineto"
+          ) {
+            current =
+              type === "rellineto"
+                ? [x * form.width, y * form.height]
+                : [x, y];
+            path.push(pt(currentMatrix, current));
+          } else if (type === "arcto" && current) {
+            const end = [x, y],
+              bow = vdxValue(row, "A", 0),
+              middle = [
+                (current[0] + end[0]) / 2,
+                (current[1] + end[1]) / 2,
+              ],
+              dx = end[0] - current[0],
+              dy = end[1] - current[1],
+              distance = Math.hypot(dx, dy) || 1,
+              control = [
+                middle[0] - (dy / distance) * bow * 2,
+                middle[1] + (dx / distance) * bow * 2,
+              ];
+            for (const point of quad(current, control, end, 10))
+              path.push(pt(currentMatrix, point));
+            current = end;
+          } else if (type === "ellipse") {
+            flush();
+            const rx = form.width / 2,
+              ry = form.height / 2,
+              points = Array.from({ length: 33 }, (_, index) =>
+                pt(currentMatrix, [
+                  rx + rx * Math.cos((index * Math.PI * 2) / 32),
+                  ry + ry * Math.sin((index * Math.PI * 2) / 32),
+                ]),
+              );
+            parts.push(...lineParts(points, false));
+          }
+        }
+        flush();
+      }
+      let hasChildren = false;
+      for (const shapes of directChildren(shape, "Shapes"))
+        for (const child of directChildren(shapes, "Shape")) {
+          hasChildren = true;
+          walk(child, currentMatrix);
+        }
+      if (!hasChildren && parts.length === before) {
+        const points = [
+          [0, 0],
+          [form.width, 0],
+          [form.width, form.height],
+          [0, form.height],
+          [0, 0],
+        ].map((point) => pt(currentMatrix, point));
+        parts.push(...lineParts(points, false));
+      }
+    }
+    for (const shapes of directChildren(container, "Shapes"))
+      for (const shape of directChildren(shapes, "Shape")) walk(shape);
+    return parts.slice(0, MAX_PARTS);
+  }
+  function vdx(text, name) {
+    const xml = new DOMParser().parseFromString(text, "application/xml");
+    if (xml.querySelector("parsererror"))
+      throw Error("The Visio XML drawing is malformed.");
+    const masters = children(xml, "Master"),
+      containers = masters.length
+        ? masters
+        : children(xml, "Page").length
+          ? children(xml, "Page")
+          : [xml.documentElement],
+      assets = [];
+    for (const container of containers.slice(0, MAX_ASSETS)) {
+      const parts = vdxGeometry(container);
+      if (!parts.length) continue;
+      const dimensions = visioMasterDimensions("", parts) || {
+        needsScale: true,
+      };
+      assets.push(
+        normalize(parts, {
+          ...dimensions,
+          name:
+            container.getAttribute("Name") ||
+            container.getAttribute("NameU") ||
+            name.replace(/\.vdx$/i, ""),
+          sourceFormat: "Visio XML",
+          sourceName: name,
+        }),
+      );
+    }
+    if (!assets.length)
+      throw Error("No supported 2D geometry was found in this Visio XML file.");
+    return assets;
+  }
+  async function visio(buffer, name) {
+    const z = await unzip(buffer, {
+        label: "Visio",
+        maxEntries: 2000,
+        maxExpandedBytes: 80 * 1024 * 1024,
+      }),
+      assets = [],
+      masters = z.get("visio/masters/masters.xml"),
+      rels = z.get("visio/masters/_rels/masters.xml.rels"),
+      meta = new Map(),
+      targets = new Map();
+    if (masters) {
+      const d = new DOMParser().parseFromString(
+        td.decode(masters),
+        "application/xml",
+      );
+      for (const m of children(d, "Master")) {
+        const id = m.getAttribute("ID"),
+          nm =
+            m.getAttribute("Name") || m.getAttribute("NameU") || "Master " + id,
+          prompt = m.getAttribute("Prompt") || "",
+          rel = directChildren(m, "Rel")[0],
+          rid =
+            rel?.getAttributeNS(
+              "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+              "id",
+            ) || rel?.getAttribute("r:id");
+        if (rid) meta.set(rid, { name: nm, prompt, id });
+      }
+    }
+    if (rels) {
+      const d = new DOMParser().parseFromString(
+        td.decode(rels),
+        "application/xml",
+      );
+      for (const r of children(d, "Relationship"))
+        targets.set(r.getAttribute("Id"), r.getAttribute("Target"));
+    }
+    for (const [rid, target] of targets) {
+      if (assets.length >= MAX_ASSETS) break;
+      const clean = (
+          "visio/masters/" + String(target).replace(/^\.\//, "")
+        ).replace("/masters/masters/", "/masters/"),
+        bytes = z.get(clean);
+      if (!bytes) continue;
+      const parts = visioGeometry(td.decode(bytes));
+      if (!parts.length) continue;
+      const info = meta.get(rid) || {},
+        dim = visioMasterDimensions(td.decode(bytes), parts) || {
+          needsScale: true,
+        };
+      assets.push(
+        normalize(parts, {
+          ...dim,
+          name: info.name || target.replace(/\.xml$/, ""),
+          sourceFormat: "Visio",
+          sourceName: name,
+        }),
+      );
+    }
+    if (!assets.length) {
+      for (const [path, bytes] of z) {
+        if (assets.length >= MAX_ASSETS) break;
+        if (!/^visio\/(masters\/master|pages\/page)\d+\.xml$/i.test(path))
+          continue;
+        const parts = visioGeometry(td.decode(bytes));
+        if (!parts.length) continue;
+        const dim = visioMasterDimensions(td.decode(bytes), parts) || {
+          needsScale: true,
+        };
+        assets.push(
+          normalize(parts, {
+            ...dim,
+            name: path
+              .split("/")
+              .at(-1)
+              .replace(/\.xml$/i, ""),
+            sourceFormat: "Visio",
+            sourceName: name,
+          }),
+        );
+      }
+    }
+    if (!assets.length)
+      throw Error(
+        "No supported 2D master geometry was found in this Visio file.",
+      );
+    return assets;
+  }
+  function jsonPack(text, name) {
+    const d = JSON.parse(text),
+      a = Array.isArray(d) ? d : d.assets;
+    if (!Array.isArray(a))
+      throw Error("This JSON file is not a SAMI shape pack.");
+    return a.slice(0, MAX_ASSETS).map((x, i) => {
+      const parts = Array.isArray(x.parts)
+        ? x.parts
+        : JSON.parse(x.symbolPartsJSON || "[]");
+      if (!root.SAMISymbols?.validParts(parts))
+        throw Error("Shape " + (i + 1) + " contains invalid geometry.");
+      return {
+        name: String(x.name || "Imported shape " + (i + 1)).slice(0, 100),
+        length: clamp(+x.length || 1, 0.1, 500),
+        width: clamp(+x.width || 1, 0.1, 500),
+        needsScale: !!x.needsScale,
+        parts,
+        sourceFormat: "SAMI shape pack",
+        sourceName: name,
+      };
+    });
+  }
+  async function parse(file) {
+    if (!file) throw Error("Choose a shape file.");
+    if (file.size > 25 * 1024 * 1024)
+      throw Error("Choose a shape pack smaller than 25 MB.");
+    const n = file.name || "shape",
+      ext = n.toLowerCase().split(".").pop();
+    if (ext === "svg") return svg(await file.text(), n);
+    if (ext === "dxf") return dxf(await file.text(), n);
+    if (["vssx", "vssm", "vsdx", "vsdm", "vstx", "vstm"].includes(ext))
+      return visio(await file.arrayBuffer(), n);
+    if (ext === "vdx") return vdx(await file.text(), n);
+    if (ext === "vss" || ext === "vsd")
+      throw Error(
+        "Legacy binary Visio files are not web-readable. In Visio, save as VSSX, VSDX or SVG, then import again.",
+      );
+    if (ext === "json" || ext === "sami-shapes")
+      return jsonPack(await file.text(), n);
+    throw Error(
+      "Use SVG, ASCII DXF, VSSX/VSSM, VSDX/VSDM, VSTX/VSTM, VDX or a SAMI shape pack.",
+    );
+  }
+  function exportPack(assets) {
+    return JSON.stringify(
+      {
+        samiShapePack: 1,
+        exportedAt: new Date().toISOString(),
+        assets: (assets || []).map((a) => ({
+          name: a.name,
+          length: a.length,
+          width: a.width,
+          needsScale: !!a.needsScale,
+          parts: JSON.parse(a.symbolPartsJSON || "[]"),
+        })),
+      },
+      null,
+      2,
+    );
+  }
+  root.SAMIShapeImport = {
+    parse,
+    unzip,
+    exportPack,
+    normalize,
+    dxf,
+    jsonPack,
+    MAX_ASSETS,
+    MAX_PARTS,
+  };
+})(typeof window !== "undefined" ? window : globalThis);

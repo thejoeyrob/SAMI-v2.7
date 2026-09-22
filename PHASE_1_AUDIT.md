@@ -1,5 +1,7 @@
 # SAMI v2.7.6 — Phase 1 audit (before implementation)
 
+Historical read-only baseline audit. Final v2.7.13 status is in `AUDIT_REPORT.md`; line numbers below refer to the Phase 1 reference copy.
+
 Audit performed against the verified supplied ZIP. No application edits were made before this report and Phase 2 plan were delivered. Zero regressions is the release goal; no static review can certify it, and real-device testing remains required.
 
 ## Scores before changes
@@ -25,7 +27,7 @@ Scale: 1 = weak, 5 = strong. These are engineering assessments, not compliance c
 | D02 | High | project-store.js: journal, recover; workspace.js: normaliseProject | Journal quota errors return false silently; localStorage access in recover is partly unguarded. Project normalisation does not carry id/createdAt/checkpointAt from the input. | Keep project identity; visible degraded/failed state; commit to IndexedDB and preserve raw recovery sources; retries and persistence request. | Medium |
 | D03 | High | workspace.js:1320 newProject, recent-open, history; engine.js:handleImport | Project switches continue even if saving fails. Import restore uses older lifecycle directly. | Require successful save before destructive switch; import as a new copy through lifecycle; backup remains available on failure. | Medium |
 | P01 | High | sw.js: install/fetch/activate | Network first without timeout; failed assets receive HTML; all assets including MP3 in atomic addAll; immediate activation/claim. | Generated critical shell, cache-first versioned assets, bounded navigation fallback, optional media, consented update preserving existing clients. | High |
-| P02 | High | index.html; config.js:build; engine.js:865; workspace.js:applyAppearance; manifest icons | Version references 271/276/266 and 0.9.1 disagree. | VERSION.json and Node stamp/validation script; consistent 2.7.7 query strings/UI/manifest/SW. | Low |
+| P02 | High | index.html; config.js:build; engine.js:865; workspace.js:applyAppearance; manifest icons | Version references 271/276/266 and 0.9.1 disagree. | VERSION.json and Node stamp/validation script; consistent release query strings/UI/manifest/SW. | Low |
 | A01 | High | index.html viewport; app.css control dimensions | Page zoom disabled; small targets (baseline map controls ~38 px). | Allow zoom; map touch handling only; 44 px controls/48 px map tools; safe-area and small-height layouts. | Medium |
 | A02 | High | app.css light-theme tokens; appearance logic | Light-theme muted text minima 3.86–4.18:1 on declared surfaces; all theme line2/surface pairs below 3:1. | Theme-derived text and UI border tokens; contrast-safe accent ink; system default + existing manual override; optional outdoor contrast. | Medium |
 | A03 | High | workspace.js:2248–2605 precision cursor | Only drag positions cursor; Enter/Space drops but arrows absent. Pointer move reads layout/rebuilds all markers, multi-touch has no explicit guard. Area perimeter preview omits closing edge. | rAF/coalesced movement, cached drag rectangles, transform position; tap-position toggle, metre nudges/arrows; incremental preview; exact closed perimeter. | Medium |

@@ -1,18 +1,881 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html lang="en-GB" data-sami-version="2.7.13"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/><meta content="#090b0d" name="theme-color"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="SAMI" name="apple-mobile-web-app-title"/><meta content="SAMI Spatial Analysis Mapping Intelligence: field-first site planning, route-to-site, Trakway, services, constraints and professional drawing output." name="description"/><script>(()=>{try{document.documentElement.dataset.theme=localStorage.getItem('sami.appearance')||'graphite'}catch{document.documentElement.dataset.theme='graphite'}document.documentElement.classList.add('intro-running');window.__SAMI_INSTALL_PROMPT__=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__SAMI_INSTALL_PROMPT__=e;});})();</script><style>html,body{background:#020405!important}#samiLaunch{background:#020405!important}</style><link href="manifest.webmanifest" rel="manifest"/><title>SAMI · Spatial Analysis Mapping Intelligence</title><link href="sami-apple-touch-icon.png?v=2713" rel="apple-touch-icon"/><link href="sami-app-icon-192.png?v=2713" rel="icon"/><link href="leaflet.css" rel="stylesheet"/><link href="app.css?v=2713" rel="stylesheet"/><link href="creator.css" rel="stylesheet"/><link href="cinema.css?v=2710" rel="stylesheet"/></head><body>
-<div aria-label="Install SAMI" id="mobileInstallGate"><div class="install-gate-card"><img alt="SAMI" src="sami-wordmark.png"/><div><h1>Install SAMI to continue</h1><p>SAMI is designed to run as an installed workspace on phones and tablets. The browser page is for installation only.</p></div><div class="install-gate-copy" id="gateInstallInstructions"></div><button hidden="" id="gateInstallBtn" type="button">Install SAMI</button><div class="install-help" id="installHelp" hidden><div class="install-help-head"><strong>Install SAMI</strong><button aria-label="Close install instructions" id="closeInstallHelp" type="button">×</button></div><ol id="installHelpSteps"></ol><p class="install-help-note">After installing, open SAMI from the new Home Screen / app icon.</p></div><button class="quiet" id="gateWhySami" type="button">Why SAMI?</button><p class="install-gate-foot">JW EDS · SPATIAL ANALYSIS &amp; MAPPING INTELLIGENCE</p></div></div>
-<section aria-label="SAMI welcome" class="cinema" id="samiLaunch"><canvas aria-hidden="true" id="samiCinema" style="background:#020405"></canvas><div aria-hidden="true" class="cinema-vignette"></div><div aria-hidden="true" class="cinema-grain"></div><div class="cinema-top"><button hidden="" id="launchSkip" type="button">Skip intro</button><button aria-label="Toggle cinematic sound" hidden="" id="launchSoundBtn" type="button">Sound off</button></div><div class="cinema-gate" id="launchStartGate"><div class="gate-rule"></div><p>SPATIAL ANALYSIS<br/>MAPPING INTELLIGENCE</p><h1>A clearer perspective.</h1><button id="startSound" type="button">Start with sound</button><button class="quiet" id="startQuiet" type="button">Continue quietly</button><small id="audioStatus" role="status">Headphones recommended</small></div><div aria-hidden="true" id="pitchWords"></div><div aria-live="polite" class="cinema-sentence" id="pitchLine"></div><section aria-label="SAMI" class="cinema-brand" id="brandResolve"><div id="wordmarkStage"><img alt="SAMI" id="finalWordmark" src="sami-wordmark.png"/><svg aria-hidden="true" class="logo-edge-pass" viewbox="0 0 1116 339"><path d="M44,115 L47,107 L50,101 L53,96 L56,92 L59,88 L62,85 L65,82 L68,80 L71,77 L74,75 L77,73 L80,72 L83,70 L86,69 L89,68 L92,67 L95,66 L98,65 L101,64 L104,64 L107,63 L110,63 L113,63 L116,63 L119,63 L122,63 L125,63 L128,63 L131,63 L134,63 L137,63 L140,63 L143,63 L146,63 L149,63 L152,63 L155,63 L158,63 L161,63 L164,63 L167,63 L170,63 L173,63 L176,63 L179,63 L182,63 L185,63 L188,63 L191,63 L194,63 L197,63 L200,63 L203,63 L206,63 L209,63 L212,63 L215,63 L218,63 L221,63 L224,63 L227,63 L230,63 L233,63 L236,63 L239,63 L242,63 L245,63 L248,63 L251,63 L254,63 L257,63 L260,63 L263,63 L266,63 L269,63 L272,63 L275,63 L278,63 L281,63 L284,63 L287,63 L290,63 L293,63 L296,63 L299,63 L302,63 L305,258 L308,253 L311,249 L314,244 L317,239 L320,235 L323,230 L326,226 L329,221 L332,217 L335,212 L338,208 L341,203 L344,199 L347,194 L350,190 L353,185 L356,181 L359,176 L362,172 L365,167 L368,163 L371,159 L374,154 L377,150 L380,145 L383,141 L386,136 L389,132 L392,127 L395,123 L398,118 L401,114 L404,109 L407,105 L410,101 L413,96 L416,92 L419,87 L422,83 L425,78 L428,74 L431,70 L434,66 L437,63 L440,60 L443,59 L446,57 L449,56 L452,55 L455,55 L458,55 L461,55 L464,55 L467,56 L470,57 L473,59 L476,61 L479,63 L482,66 L485,70 L488,74 L491,79 L494,83 L497,88 L500,92 L503,97 L506,101 L509,106 L512,110 L515,115 L518,120 L521,124 L524,129 L527,133 L530,138 L533,143 L536,147 L539,152 L542,157 L545,161 L548,166 L551,170 L554,175 L557,180 L560,184 L563,189 L566,193 L569,198 L572,203 L575,207 L578,212 L581,217 L584,221 L587,226 L590,230 L593,235 L596,240 L599,244 L602,249 L605,254 L608,258 L611,263 L614,268 L617,273 L620,277 L623,282 L626,287 L629,62 L632,62 L635,62 L638,62 L641,62 L644,62 L647,62 L650,62 L653,62 L656,62 L659,62 L662,62 L665,62 L668,62 L671,62 L674,62 L677,63 L680,65 L683,69 L686,73 L689,76 L692,80 L695,84 L698,88 L701,92 L704,96 L707,99 L710,104 L713,107 L716,111 L719,115 L722,119 L725,123 L728,127 L731,131 L734,135 L737,139 L740,142 L743,147 L746,151 L749,155 L752,158 L755,163 L758,167 L761,170 L764,174 L767,178 L770,182 L773,186 L776,190 L779,194 L782,198 L785,202 L788,206 L791,210 L794,214 L797,218 L800,222 L803,222 L806,218 L809,215 L812,211 L815,207 L818,203 L821,200 L824,196 L827,192 L830,188 L833,185 L836,181 L839,177 L842,173 L845,170 L848,166 L851,163 L854,159 L857,155 L860,151 L863,148 L866,144 L869,140 L872,136 L875,133 L878,129 L881,125 L884,122 L887,118 L890,114 L893,111 L896,107 L899,103 L902,100 L905,96 L908,92 L911,89 L914,85 L917,81 L920,77 L923,74 L926,70 L929,67 L932,64 L935,63 L938,62 L941,62 L944,62 L947,62 L950,62 L953,62 L956,62 L959,62 L962,62 L965,62 L968,62 L971,62 L974,62 L977,62 L980,62 L983,62 L1022,70 L1025,64 L1028,62 L1031,61 L1034,61 L1037,61 L1040,61 L1043,61 L1046,61 L1049,61 L1052,61 L1055,61 L1058,61 L1061,61 L1064,61 L1067,61 L1070,63 L1073,66" pathlength="100"></path><path d="M44,291 L47,291 L50,290 L53,290 L56,290 L59,290 L62,290 L65,290 L68,290 L71,290 L74,290 L77,290 L80,290 L83,290 L86,290 L89,290 L92,290 L95,290 L98,290 L101,290 L104,290 L107,290 L110,290 L113,290 L116,290 L119,290 L122,290 L125,290 L128,290 L131,290 L134,290 L137,290 L140,290 L143,290 L146,290 L149,290 L152,290 L155,290 L158,290 L161,290 L164,290 L167,290 L170,290 L173,290 L176,290 L179,290 L182,290 L185,290 L188,290 L191,290 L194,290 L197,290 L200,290 L203,290 L206,290 L209,290 L212,290 L215,290 L218,290 L221,290 L224,290 L227,290 L230,290 L233,290 L236,290 L239,290 L242,289 L245,289 L248,288 L251,287 L254,286 L257,285 L260,284 L263,282 L266,280 L269,279 L272,277 L275,275 L278,272 L281,269 L284,291 L287,290 L290,290 L293,290 L296,290 L299,290 L302,290 L305,290 L308,290 L311,290 L314,290 L317,290 L320,290 L323,290 L326,290 L329,290 L332,290 L335,290 L338,290 L341,290 L344,290 L347,288 L350,284 L353,279 L356,274 L359,270 L362,265 L365,260 L368,256 L371,251 L374,246 L377,242 L380,237 L383,232 L386,228 L389,223 L392,218 L395,214 L398,293 L401,294 L404,295 L407,296 L410,297 L413,297 L416,298 L419,298 L422,299 L425,299 L428,300 L431,300 L434,300 L437,300 L440,300 L443,301 L446,301 L449,301 L452,301 L455,301 L458,301 L461,301 L464,301 L467,301 L470,301 L473,301 L476,301 L479,300 L482,300 L485,300 L488,299 L491,299 L494,299 L497,298 L500,298 L503,297 L506,297 L509,296 L512,295 L515,294 L518,292 L521,216 L524,221 L527,226 L530,230 L533,235 L536,240 L539,245 L542,249 L545,254 L548,259 L551,264 L554,268 L557,273 L560,278 L563,283 L566,288 L569,291 L572,290 L575,290 L578,290 L581,290 L584,290 L587,290 L590,290 L593,290 L596,290 L599,290 L602,290 L605,290 L608,290 L611,290 L614,290 L617,290 L620,290 L623,290 L626,290 L629,276 L632,281 L635,285 L638,290 L641,290 L644,290 L647,290 L650,290 L653,290 L656,290 L659,290 L662,290 L665,290 L668,290 L671,290 L674,290 L677,290 L680,153 L683,156 L686,160 L689,164 L692,168 L695,172 L698,176 L701,179 L704,183 L707,187 L710,191 L713,195 L716,199 L719,203 L722,206 L725,211 L728,215 L731,218 L734,222 L737,226 L740,230 L743,234 L746,238 L749,242 L752,246 L755,249 L758,253 L761,257 L764,261 L767,265 L770,269 L773,273 L776,277 L779,280 L782,284 L785,286 L788,288 L791,290 L794,291 L797,291 L800,291 L803,291 L806,291 L809,290 L812,289 L815,288 L818,286 L821,283 L824,279 L827,275 L830,271 L833,268 L836,264 L839,260 L842,257 L845,253 L848,249 L851,246 L854,242 L857,238 L860,235 L863,231 L866,227 L869,224 L872,220 L875,216 L878,213 L881,209 L884,205 L887,202 L890,198 L893,194 L896,191 L899,187 L902,183 L905,180 L908,176 L911,172 L914,169 L917,165 L920,162 L923,158 L926,155 L929,290 L932,290 L935,290 L938,290 L941,290 L944,290 L947,290 L950,290 L953,290 L956,290 L959,290 L962,290 L965,290 L968,290 L971,290 L974,290 L977,290 L980,290 L983,290 L1022,282 L1025,287 L1028,290 L1031,291 L1034,291 L1037,291 L1040,291 L1043,291 L1046,291 L1049,291 L1052,291 L1055,291 L1058,291 L1061,291 L1064,291 L1067,290 L1070,289 L1073,285" pathlength="100"></path></svg></div><div class="welcome-ui"><p class="brand-tag"><span>SPATIAL</span><i aria-hidden="true"></i><span>ANALYSIS</span><i aria-hidden="true"></i><span>MAPPING</span><i aria-hidden="true"></i><span>INTELLIGENCE</span></p><button class="cinema-enter" id="enterSami" type="button">Enter Workspace <span>↗</span></button><button class="cinema-why" id="whySami" type="button">Why SAMI?</button></div></section><div class="cinema-closed" hidden="" id="cinemaClosed"><img alt="SAMI" src="sami-wordmark.png"/><p>SAMI closed</p><small>Your project is saved on this device.</small><button id="reopenSami" type="button">Open SAMI</button></div><audio id="welcomeAudio" preload="none"></audio><audio id="salesAudio" preload="auto" playsinline src="why-sami-promo-v272.mp3"></audio></section><div aria-hidden="true" class="app-shell" id="app" inert=""><header class="topbar"><button aria-label="Open project" class="brand-button" id="homeBtn"><img alt="SAMI" src="sami-wordmark.png"/></button><div class="project-title-wrap"><input aria-label="Project name" class="project-title" id="projectName" readonly value="Untitled site"/><div class="project-meta"><span id="saveState">Saved on this device</span> · v2.7.13</div></div><div class="top-actions"><button class="legacy-hook" hidden="" id="projectBtn">Project</button><button class="legacy-hook" hidden="" id="searchBtn">Search</button><button class="legacy-hook" hidden="" id="quickHelp">?</button><button class="legacy-hook" hidden="" id="quickAssets">Assets</button><button aria-label="Review and export" class="accent-btn" id="exportBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg></button><button aria-expanded="false" aria-label="SAMI menu" class="header-btn" id="menuButton"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button></div></header>
-<nav aria-label="Workspace modes" class="modebar"><div class="mode-tabs"><button aria-pressed="true" data-mode="project"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.2a1.7 1.7 0 0 1 1.7-1.7h4l1.7 2h8a1.7 1.7 0 0 1 1.7 1.7v8.1a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7z"/></svg><span>Project</span></button><button aria-pressed="false" data-mode="map"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19.5L3.8 17V5.2L9 7.7l6-2.5 5.2 2.5V17L14 14.5l-5 2.5z"/><path d="M9 7.7v9.3M15 5.2v9.3"/></svg><span>Explore</span></button><button aria-pressed="false" data-mode="route"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="6" r="2"/><circle cx="18.5" cy="18" r="2"/><path d="M7.2 7.2L11 11c1.6 1.6 1.6 4 0 5.6"/></svg><span>Route</span></button><button aria-pressed="false" data-mode="plan"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 9h17M9 3.5v17" stroke-dasharray="1.6 2"/></svg><span>Site Plan</span></button><button aria-pressed="false" data-mode="create"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><path d="M17 13.5v7M13.5 17h7"/></svg><span>Create</span></button></div><span class="mode-caption" id="modeCaption"></span></nav>
-<main class="workspace" id="workspace"><aside aria-label="Workspace tools" class="inspector" id="inspector"><div id="inspectorTabs"></div><div id="inspectorBody"></div></aside><div aria-label="Interactive site map" class="map" id="map"></div><div aria-hidden="true" class="cad-overlay" id="cadOverlay"><div class="cad-sheet-border"></div><div class="cad-titleblock"><div class="cad-brand"><img alt="" src="sami-wordmark.png"/><span>CREATED USING SAMI</span></div><div><small>PROJECT</small><strong id="cadProjectName">Untitled site</strong><small id="cadSiteRef"></small></div><div><small>DRAWING</small><strong id="cadDrawingNo">SITE PLAN</strong><small id="cadRevision">Rev —</small></div><div><small>SCALE</small><strong id="cadScale">AUTO</strong><small>Site drawing · true-scale geometry</small></div></div></div>
-<div class="canvas-toolbar"><div aria-label="Map background" class="base-switch"><button aria-pressed="false" data-base="street">Map</button><button aria-pressed="true" class="active" data-base="satellite">Satellite</button><button aria-pressed="false" data-base="drawing">CAD drawing</button></div><button aria-expanded="true" aria-label="Collapse background options" class="mini-btn" id="baseCollapse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button><div class="history-controls"><button disabled="" id="undoBtn" title="Undo (Ctrl or Cmd Z)"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7L3 11l4 4"/><path d="M3 11h10.5a5.5 5.5 0 0 1 0 11H10"/></svg> <span>Undo</span></button><button disabled="" id="redoBtn" title="Redo (Ctrl or Cmd Shift Z)"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7l4 4-4 4"/><path d="M21 11H10.5a5.5 5.5 0 0 0 0 11H14"/></svg> <span>Redo</span></button></div></div>
-<div class="area-chip"><button id="areaChip">＋ Define site area</button><span id="sourceChip">OpenStreetMap</span></div>
-<div aria-label="Map controls" class="map-controls"><button aria-label="Map bearing · return north" id="compassButton" title="Map bearing"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L15.2 11.2 12 9.6 8.8 11.2 12 2Z" fill="currentColor"/><path d="M12 22L8.8 12.8 12 14.4 15.2 12.8 12 22Z" fill="currentColor" opacity=".38"/></svg></button><button aria-label="Set map bearing" hidden="" id="bearingButton" title="Set map bearing"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4"/></svg></button><button aria-label="Use current location" id="locateBtn" title="Use current location"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3.2M12 18.3v3.2M21.5 12h-3.2M5.7 12H2.5"/></svg></button><button aria-label="Fit plan" id="fitBtn" title="Fit plan"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V5.8A1.8 1.8 0 0 1 5.8 4H9"/><path d="M20 9V5.8A1.8 1.8 0 0 0 18.2 4H15"/><path d="M4 15v3.2A1.8 1.8 0 0 0 5.8 20H9"/><path d="M20 15v3.2a1.8 1.8 0 0 1-1.8 1.8H15"/></svg></button><button aria-pressed="false" id="lockBtn" title="Lock map"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> <span>Lock</span></button><button aria-label="Zoom in" id="zoomInBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><button aria-label="Zoom out" id="zoomOutBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
-<div aria-label="Shared drawing tools" class="master-toolbar"><button data-master="place" title="Place selected asset (P)">▣</button><button data-master="line" title="Point line (L)">⌁</button><button data-master="area" title="Point area (A)">⬡</button><button data-master="freeLine" title="Freehand line (F)">〰</button><button data-master="freeArea" title="Freehand area (Shift F)">◌</button><button aria-pressed="true" id="snapToggle" title="Snap to corners (S)">⊞</button></div><aside aria-label="Planning tools" class="tool-rail" id="toolRail"><div class="rail-head"><button aria-label="Move toolbar" class="rail-drag" id="railMove" title="Drag tools to move">⠿</button><button aria-expanded="true" aria-label="Collapse tools" id="railCollapse">‹</button></div><button class="rail-tool" id="selectTool" title="Select (V)"><span>↖</span><small>Select</small></button><button class="rail-tool" data-drawer="draw"><span>✎</span><small>Draw</small></button><button class="rail-tool" data-drawer="assets"><span>▣</span><small>Assets</small></button><button class="rail-tool" data-drawer="services"><span>≋</span><small>Services</small></button><button class="rail-tool" data-drawer="area"><span>⌗</span><small>Site area</small></button><button class="rail-tool" data-drawer="layers"><span>◫</span><small>Layers</small></button><button class="rail-tool" data-drawer="help"><span>?</span><small>Help</small></button></aside>
-<section aria-hidden="true" aria-label="Planning options" class="drawer" id="drawer" inert=""><div class="drawer-head"><div><div class="eyebrow">SAMI WORKSPACE</div><h2 id="drawerTitle">Draw</h2></div><button aria-label="Close tools" class="close-btn" id="closeDrawer"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="drawer-content" id="drawerContent"></div></section>
-<section aria-live="polite" class="draw-status" hidden="" id="drawStatus"><div><strong id="toolName">Drawing</strong><span id="drawHint">Tap to add points.</span></div><div class="draw-actions"><button id="backPointBtn">↶ Point</button><button id="cancelDrawBtn">Cancel</button><button class="primary" id="finishDrawBtn">Finish</button></div></section>
-<section class="welcome-card" hidden="" id="welcomeCard"><div class="eyebrow">A CLEARER WAY TO PLAN</div><h1>Your site. Your space.</h1><p>Find a site, define the site area, then build a true-scale site plan, assess constraints and plan the HGV route to site. Everything stays together.</p><button class="wide-btn primary" id="startFindBtn">Find your site</button><button class="text-btn" id="dismissWelcome">Start drawing here</button><button class="text-btn" id="welcomeWhySami">Why SAMI?</button></section>
-<section aria-live="polite" class="sami-panel" id="samiPanel"><div class="sami-panel-head"><img alt="" src="sami-mark.png"/><div><strong>Ask SAMI</strong><small>Control your site workspace</small></div><button aria-label="Mute SAMI talk-back" class="mini-btn" id="muteSami">Voice on</button><button aria-label="Close SAMI conversation" class="close-btn" id="closeSami">×</button></div><div class="sami-messages" id="samiMessages"><div class="msg sami">Try “create a 15 × 15 m pad in Lion panels”, “add a concrete mixer truck”, “define site area” or “undo”.</div></div></section>
-<button aria-expanded="true" aria-label="Show or hide Ask SAMI" class="ask-collapse" id="askCollapse">✦</button><div class="ask-bar-wrap"><div class="ask-bar"><input aria-label="Ask SAMI request" autocomplete="off" id="askInput" readonly placeholder="Type a request, or tap Ask SAMI…" type="text"/><button aria-label="Ask SAMI by voice" aria-pressed="false" class="send-btn" id="sendBtn"><img alt="" src="sami-mark.png"/><span id="askButtonLabel">Ask SAMI</span></button></div><div class="voice-hint" id="voiceHint">Tap Ask SAMI to speak · type and press Enter to send</div></div><div class="selection-bar" hidden="" id="selectionBar"><span><strong id="selectionName"></strong><small id="selectionCount"></small></span><button data-action="open:selection" aria-label="Properties and colour" title="Properties and colour"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button><button data-action="editDuplicate" aria-label="Duplicate" title="Duplicate"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button><button data-action="editGroup" aria-label="Group" title="Group"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/><path d="M10 6.5h5A2.5 2.5 0 0 1 17.5 9v5"/></svg></button><button data-action="editUngroup" aria-label="Ungroup" title="Ungroup"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg></button><button data-action="editDelete" aria-label="Delete" title="Delete"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/></svg></button></div><section class="creator-workspace" hidden="" id="creatorWorkspace"></section><input accept="image/png,image/jpeg,image/webp" hidden="" id="logoInput" type="file"/><input accept=".svg,.dxf,.vssx,.vsdx,.json,.sami-shapes,image/svg+xml,application/json" hidden="" id="shapePackInput" type="file"/><span class="coord-readout" id="coordReadout"></span><input accept=".sami,.json,.geojson,.trakway,application/json,application/geo+json" hidden="" id="importInput" type="file"/><input accept=".json,.geojson,application/json,application/geo+json" hidden="" id="dataPackInput" type="file"/><input accept="image/*" hidden="" id="photoInput" type="file"/><section aria-hidden="true" class="print-template" id="printTemplate"><div class="print-map-frame"><div class="coord-border top" id="printCoordTop"></div><div class="coord-border bottom" id="printCoordBottom"></div><div class="coord-border left" id="printCoordLeft"></div><div class="coord-border right" id="printCoordRight"></div></div><div class="print-titleblock"><div class="print-brand"><img alt="SAMI" src="sami-wordmark.png"/><strong>CREATED USING SAMI</strong></div><div id="printProjectMeta"></div><div id="printLegend"></div><div id="printAssets"></div></div></section></main></div>
-<div aria-labelledby="modalTitle" aria-modal="true" class="modal hidden" id="modal" role="dialog"><div class="modal-card"><div class="modal-head"><h3 id="modalTitle">SAMI</h3><button aria-label="Close dialog" class="close-btn" id="modalClose"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="modal-body" id="modalBody"></div><div class="modal-export-footer" id="modalFooter" hidden></div></div></div><div class="toast" hidden="" id="toast" role="status"></div>
-<script defer="" src="leaflet.js"></script><script defer="" src="config.js"></script><script defer="" src="polygon-clipping.js"></script><script defer="" src="geometry.js"></script><script defer="" src="qrcode.js"></script><script defer="" src="documents.js"></script><script defer="" src="intelligence.js"></script><script defer="" src="symbols.js"></script><script defer="" src="builtin-assets.js"></script><script defer="" src="shape-import.js"></script><script defer="" src="studio.js"></script><script defer="" src="project-store.js"></script><script defer="" src="bearing.js"></script><script defer="" src="workspace.js?v=2713"></script><script defer="" src="engine.js"></script><script defer="" src="cinema.js?v=2710"></script></body></html>
+<html lang="en-GB" data-sami-version="2.7.14">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+      name="viewport"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https:; worker-src 'self'; frame-src blob:; form-action 'self';"
+    />
+    <meta content="#090b0d" name="theme-color" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta
+      content="black-translucent"
+      name="apple-mobile-web-app-status-bar-style"
+    />
+    <meta content="SAMI" name="apple-mobile-web-app-title" />
+    <meta
+      content="SAMI Spatial Analysis Mapping Intelligence: field-first site planning, route-to-site, Trakway, services, constraints and professional drawing output."
+      name="description"
+    />
+    <script>
+      (() => {
+        try {
+          document.documentElement.dataset.theme =
+            localStorage.getItem("sami.appearance") || "graphite";
+        } catch {
+          document.documentElement.dataset.theme = "graphite";
+        }
+        document.documentElement.classList.add("intro-running");
+        window.__SAMI_INSTALL_PROMPT__ = null;
+        addEventListener("beforeinstallprompt", (e) => {
+          e.preventDefault();
+          window.__SAMI_INSTALL_PROMPT__ = e;
+        });
+      })();
+    </script>
+    <style>
+      html,
+      body {
+        background: #020405 !important;
+      }
+      #samiLaunch {
+        background: #020405 !important;
+      }
+    </style>
+    <link href="manifest.webmanifest?v=2.7.14" rel="manifest" />
+    <title>SAMI · Spatial Analysis Mapping Intelligence</title>
+    <link href="sami-apple-touch-icon.png?v=2.7.14" rel="apple-touch-icon" />
+    <link href="sami-app-icon-192.png?v=2.7.14" rel="icon" />
+    <link href="leaflet.css?v=2.7.14" rel="stylesheet" />
+    <link href="app.css?v=2.7.14" rel="stylesheet" />
+    <link href="creator.css?v=2.7.14" rel="stylesheet" />
+    <link href="cinema.css?v=2.7.14" rel="stylesheet" />
+  </head>
+  <body>
+    <div aria-label="Install SAMI" id="mobileInstallGate">
+      <div class="install-gate-card">
+        <img alt="SAMI" src="sami-wordmark.png?v=2.7.14" />
+        <div>
+          <h1>Install SAMI to continue</h1>
+          <p>
+            SAMI is designed to run as an installed workspace on phones and
+            tablets. The browser page is for installation only.
+          </p>
+        </div>
+        <div class="install-gate-copy" id="gateInstallInstructions"></div>
+        <button hidden="" id="gateInstallBtn" type="button">
+          Install SAMI
+        </button>
+        <div class="install-help" id="installHelp" hidden>
+          <div class="install-help-head">
+            <strong>Install SAMI</strong
+            ><button
+              aria-label="Close install instructions"
+              id="closeInstallHelp"
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+          <ol id="installHelpSteps"></ol>
+          <p class="install-help-note">
+            After installing, open SAMI from the new Home Screen / app icon.
+          </p>
+        </div>
+        <button class="quiet" id="gateWhySami" type="button">Why SAMI?</button>
+        <p class="install-gate-foot">
+          JW EDS · SPATIAL ANALYSIS &amp; MAPPING INTELLIGENCE
+        </p>
+      </div>
+    </div>
+    <section aria-label="SAMI welcome" class="cinema" id="samiLaunch">
+      <canvas
+        aria-hidden="true"
+        id="samiCinema"
+        style="background: #020405"
+      ></canvas>
+      <div aria-hidden="true" class="cinema-vignette"></div>
+      <div aria-hidden="true" class="cinema-grain"></div>
+      <div class="cinema-top">
+        <button hidden="" id="launchSkip" type="button">Skip intro</button
+        ><button
+          aria-label="Toggle cinematic sound"
+          hidden=""
+          id="launchSoundBtn"
+          type="button"
+        >
+          Sound off
+        </button>
+      </div>
+      <div class="cinema-gate" id="launchStartGate">
+        <div class="gate-rule"></div>
+        <p>SPATIAL ANALYSIS<br />MAPPING INTELLIGENCE</p>
+        <h1>A clearer perspective.</h1>
+        <button id="startSound" type="button">Start with sound</button
+        ><button class="quiet" id="startQuiet" type="button">
+          Continue quietly</button
+        ><small id="audioStatus" role="status">Headphones recommended</small>
+      </div>
+      <div aria-hidden="true" id="pitchWords"></div>
+      <div aria-live="polite" class="cinema-sentence" id="pitchLine"></div>
+      <section aria-label="SAMI" class="cinema-brand" id="brandResolve">
+        <div id="wordmarkStage">
+          <img alt="SAMI" id="finalWordmark" src="sami-wordmark.png?v=2.7.14" /><svg
+            aria-hidden="true"
+            class="logo-edge-pass"
+            viewbox="0 0 1116 339"
+          >
+            <path
+              d="M44,115 L47,107 L50,101 L53,96 L56,92 L59,88 L62,85 L65,82 L68,80 L71,77 L74,75 L77,73 L80,72 L83,70 L86,69 L89,68 L92,67 L95,66 L98,65 L101,64 L104,64 L107,63 L110,63 L113,63 L116,63 L119,63 L122,63 L125,63 L128,63 L131,63 L134,63 L137,63 L140,63 L143,63 L146,63 L149,63 L152,63 L155,63 L158,63 L161,63 L164,63 L167,63 L170,63 L173,63 L176,63 L179,63 L182,63 L185,63 L188,63 L191,63 L194,63 L197,63 L200,63 L203,63 L206,63 L209,63 L212,63 L215,63 L218,63 L221,63 L224,63 L227,63 L230,63 L233,63 L236,63 L239,63 L242,63 L245,63 L248,63 L251,63 L254,63 L257,63 L260,63 L263,63 L266,63 L269,63 L272,63 L275,63 L278,63 L281,63 L284,63 L287,63 L290,63 L293,63 L296,63 L299,63 L302,63 L305,258 L308,253 L311,249 L314,244 L317,239 L320,235 L323,230 L326,226 L329,221 L332,217 L335,212 L338,208 L341,203 L344,199 L347,194 L350,190 L353,185 L356,181 L359,176 L362,172 L365,167 L368,163 L371,159 L374,154 L377,150 L380,145 L383,141 L386,136 L389,132 L392,127 L395,123 L398,118 L401,114 L404,109 L407,105 L410,101 L413,96 L416,92 L419,87 L422,83 L425,78 L428,74 L431,70 L434,66 L437,63 L440,60 L443,59 L446,57 L449,56 L452,55 L455,55 L458,55 L461,55 L464,55 L467,56 L470,57 L473,59 L476,61 L479,63 L482,66 L485,70 L488,74 L491,79 L494,83 L497,88 L500,92 L503,97 L506,101 L509,106 L512,110 L515,115 L518,120 L521,124 L524,129 L527,133 L530,138 L533,143 L536,147 L539,152 L542,157 L545,161 L548,166 L551,170 L554,175 L557,180 L560,184 L563,189 L566,193 L569,198 L572,203 L575,207 L578,212 L581,217 L584,221 L587,226 L590,230 L593,235 L596,240 L599,244 L602,249 L605,254 L608,258 L611,263 L614,268 L617,273 L620,277 L623,282 L626,287 L629,62 L632,62 L635,62 L638,62 L641,62 L644,62 L647,62 L650,62 L653,62 L656,62 L659,62 L662,62 L665,62 L668,62 L671,62 L674,62 L677,63 L680,65 L683,69 L686,73 L689,76 L692,80 L695,84 L698,88 L701,92 L704,96 L707,99 L710,104 L713,107 L716,111 L719,115 L722,119 L725,123 L728,127 L731,131 L734,135 L737,139 L740,142 L743,147 L746,151 L749,155 L752,158 L755,163 L758,167 L761,170 L764,174 L767,178 L770,182 L773,186 L776,190 L779,194 L782,198 L785,202 L788,206 L791,210 L794,214 L797,218 L800,222 L803,222 L806,218 L809,215 L812,211 L815,207 L818,203 L821,200 L824,196 L827,192 L830,188 L833,185 L836,181 L839,177 L842,173 L845,170 L848,166 L851,163 L854,159 L857,155 L860,151 L863,148 L866,144 L869,140 L872,136 L875,133 L878,129 L881,125 L884,122 L887,118 L890,114 L893,111 L896,107 L899,103 L902,100 L905,96 L908,92 L911,89 L914,85 L917,81 L920,77 L923,74 L926,70 L929,67 L932,64 L935,63 L938,62 L941,62 L944,62 L947,62 L950,62 L953,62 L956,62 L959,62 L962,62 L965,62 L968,62 L971,62 L974,62 L977,62 L980,62 L983,62 L1022,70 L1025,64 L1028,62 L1031,61 L1034,61 L1037,61 L1040,61 L1043,61 L1046,61 L1049,61 L1052,61 L1055,61 L1058,61 L1061,61 L1064,61 L1067,61 L1070,63 L1073,66"
+              pathlength="100"
+            ></path>
+            <path
+              d="M44,291 L47,291 L50,290 L53,290 L56,290 L59,290 L62,290 L65,290 L68,290 L71,290 L74,290 L77,290 L80,290 L83,290 L86,290 L89,290 L92,290 L95,290 L98,290 L101,290 L104,290 L107,290 L110,290 L113,290 L116,290 L119,290 L122,290 L125,290 L128,290 L131,290 L134,290 L137,290 L140,290 L143,290 L146,290 L149,290 L152,290 L155,290 L158,290 L161,290 L164,290 L167,290 L170,290 L173,290 L176,290 L179,290 L182,290 L185,290 L188,290 L191,290 L194,290 L197,290 L200,290 L203,290 L206,290 L209,290 L212,290 L215,290 L218,290 L221,290 L224,290 L227,290 L230,290 L233,290 L236,290 L239,290 L242,289 L245,289 L248,288 L251,287 L254,286 L257,285 L260,284 L263,282 L266,280 L269,279 L272,277 L275,275 L278,272 L281,269 L284,291 L287,290 L290,290 L293,290 L296,290 L299,290 L302,290 L305,290 L308,290 L311,290 L314,290 L317,290 L320,290 L323,290 L326,290 L329,290 L332,290 L335,290 L338,290 L341,290 L344,290 L347,288 L350,284 L353,279 L356,274 L359,270 L362,265 L365,260 L368,256 L371,251 L374,246 L377,242 L380,237 L383,232 L386,228 L389,223 L392,218 L395,214 L398,293 L401,294 L404,295 L407,296 L410,297 L413,297 L416,298 L419,298 L422,299 L425,299 L428,300 L431,300 L434,300 L437,300 L440,300 L443,301 L446,301 L449,301 L452,301 L455,301 L458,301 L461,301 L464,301 L467,301 L470,301 L473,301 L476,301 L479,300 L482,300 L485,300 L488,299 L491,299 L494,299 L497,298 L500,298 L503,297 L506,297 L509,296 L512,295 L515,294 L518,292 L521,216 L524,221 L527,226 L530,230 L533,235 L536,240 L539,245 L542,249 L545,254 L548,259 L551,264 L554,268 L557,273 L560,278 L563,283 L566,288 L569,291 L572,290 L575,290 L578,290 L581,290 L584,290 L587,290 L590,290 L593,290 L596,290 L599,290 L602,290 L605,290 L608,290 L611,290 L614,290 L617,290 L620,290 L623,290 L626,290 L629,276 L632,281 L635,285 L638,290 L641,290 L644,290 L647,290 L650,290 L653,290 L656,290 L659,290 L662,290 L665,290 L668,290 L671,290 L674,290 L677,290 L680,153 L683,156 L686,160 L689,164 L692,168 L695,172 L698,176 L701,179 L704,183 L707,187 L710,191 L713,195 L716,199 L719,203 L722,206 L725,211 L728,215 L731,218 L734,222 L737,226 L740,230 L743,234 L746,238 L749,242 L752,246 L755,249 L758,253 L761,257 L764,261 L767,265 L770,269 L773,273 L776,277 L779,280 L782,284 L785,286 L788,288 L791,290 L794,291 L797,291 L800,291 L803,291 L806,291 L809,290 L812,289 L815,288 L818,286 L821,283 L824,279 L827,275 L830,271 L833,268 L836,264 L839,260 L842,257 L845,253 L848,249 L851,246 L854,242 L857,238 L860,235 L863,231 L866,227 L869,224 L872,220 L875,216 L878,213 L881,209 L884,205 L887,202 L890,198 L893,194 L896,191 L899,187 L902,183 L905,180 L908,176 L911,172 L914,169 L917,165 L920,162 L923,158 L926,155 L929,290 L932,290 L935,290 L938,290 L941,290 L944,290 L947,290 L950,290 L953,290 L956,290 L959,290 L962,290 L965,290 L968,290 L971,290 L974,290 L977,290 L980,290 L983,290 L1022,282 L1025,287 L1028,290 L1031,291 L1034,291 L1037,291 L1040,291 L1043,291 L1046,291 L1049,291 L1052,291 L1055,291 L1058,291 L1061,291 L1064,291 L1067,290 L1070,289 L1073,285"
+              pathlength="100"
+            ></path>
+          </svg>
+        </div>
+        <div class="welcome-ui">
+          <p class="brand-tag">
+            <span>SPATIAL</span><i aria-hidden="true"></i><span>ANALYSIS</span
+            ><i aria-hidden="true"></i><span>MAPPING</span
+            ><i aria-hidden="true"></i><span>INTELLIGENCE</span>
+          </p>
+          <button class="cinema-enter" id="enterSami" type="button">
+            Enter Workspace <span>↗</span></button
+          ><button class="cinema-why" id="whySami" type="button">
+            Why SAMI?
+          </button>
+        </div>
+      </section>
+      <div class="cinema-closed" hidden="" id="cinemaClosed">
+        <img alt="SAMI" src="sami-wordmark.png?v=2.7.14" />
+        <p>SAMI closed</p>
+        <small>Your project is saved on this device.</small
+        ><button id="reopenSami" type="button">Open SAMI</button>
+      </div>
+      <audio id="welcomeAudio" preload="none"></audio
+      ><audio
+        id="salesAudio"
+        preload="none"
+        playsinline
+        src="why-sami-promo-v272.mp3?v=2.7.14"
+      ></audio>
+    </section>
+    <div aria-hidden="true" class="app-shell" id="app" inert="">
+      <header class="topbar">
+        <button aria-label="Open project" class="brand-button" id="homeBtn">
+          <img alt="SAMI" src="sami-wordmark.png?v=2.7.14" />
+        </button>
+        <div class="project-title-wrap">
+          <input
+            aria-label="Project name"
+            class="project-title"
+            id="projectName"
+            readonly
+            value="Untitled site"
+          />
+          <div class="project-meta">
+            <span id="saveState">Saved on this device</span> ·
+            <span data-version>v2.7.14</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="legacy-hook" hidden="" id="projectBtn">Project</button
+          ><button class="legacy-hook" hidden="" id="searchBtn">Search</button
+          ><button class="legacy-hook" hidden="" id="quickHelp">?</button
+          ><button class="legacy-hook" hidden="" id="quickAssets">Assets</button
+          ><button
+            aria-label="Review and export"
+            class="accent-btn"
+            id="exportBtn"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7" />
+              <path d="M9 7h8v8" />
+            </svg></button
+          ><button
+            aria-expanded="false"
+            aria-label="SAMI menu"
+            class="header-btn"
+            id="menuButton"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="20" y2="17" />
+            </svg>
+          </button>
+        </div>
+      </header>
+      <nav aria-label="Workspace modes" class="modebar">
+        <div class="mode-tabs">
+          <button aria-pressed="true" data-mode="project">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M3.5 7.2a1.7 1.7 0 0 1 1.7-1.7h4l1.7 2h8a1.7 1.7 0 0 1 1.7 1.7v8.1a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7z"
+              /></svg
+            ><span>Project</span></button
+          ><button aria-pressed="false" data-mode="map">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M9 19.5L3.8 17V5.2L9 7.7l6-2.5 5.2 2.5V17L14 14.5l-5 2.5z"
+              />
+              <path d="M9 7.7v9.3M15 5.2v9.3" /></svg
+            ><span>Explore</span></button
+          ><button aria-pressed="false" data-mode="route">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="5.5" cy="6" r="2" />
+              <circle cx="18.5" cy="18" r="2" />
+              <path d="M7.2 7.2L11 11c1.6 1.6 1.6 4 0 5.6" /></svg
+            ><span>Route</span></button
+          ><button aria-pressed="false" data-mode="plan">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3.5" y="3.5" width="17" height="17" rx="1.5" />
+              <path d="M3.5 9h17M9 3.5v17" stroke-dasharray="1.6 2" /></svg
+            ><span>Site Plan</span></button
+          ><button aria-pressed="false" data-mode="create">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3.5" y="3.5" width="7" height="7" rx="1" />
+              <rect x="13.5" y="3.5" width="7" height="7" rx="1" />
+              <rect x="3.5" y="13.5" width="7" height="7" rx="1" />
+              <path d="M17 13.5v7M13.5 17h7" /></svg
+            ><span>Create</span>
+          </button>
+        </div>
+        <span class="mode-caption" id="modeCaption"></span>
+      </nav>
+      <main class="workspace" id="workspace">
+        <aside aria-label="Workspace tools" class="inspector" id="inspector">
+          <div id="inspectorTabs"></div>
+          <div id="inspectorBody"></div>
+        </aside>
+        <div aria-label="Interactive site map" class="map" id="map"></div>
+        <div aria-hidden="true" class="cad-overlay" id="cadOverlay">
+          <div class="cad-sheet-border"></div>
+          <div class="cad-titleblock">
+            <div class="cad-brand">
+              <img alt="" src="sami-wordmark.png?v=2.7.14" /><span
+                >CREATED USING SAMI</span
+              >
+            </div>
+            <div>
+              <small>PROJECT</small
+              ><strong id="cadProjectName">Untitled site</strong
+              ><small id="cadSiteRef"></small>
+            </div>
+            <div>
+              <small>DRAWING</small><strong id="cadDrawingNo">SITE PLAN</strong
+              ><small id="cadRevision">Rev —</small>
+            </div>
+            <div>
+              <small>SCALE</small><strong id="cadScale">AUTO</strong
+              ><small>Site drawing · true-scale geometry</small>
+            </div>
+          </div>
+        </div>
+        <div class="canvas-toolbar">
+          <div aria-label="Map background" class="base-switch">
+            <button aria-pressed="false" data-base="street">Map</button
+            ><button aria-pressed="true" class="active" data-base="satellite">
+              Satellite</button
+            ><button aria-pressed="false" data-base="drawing">
+              CAD drawing
+            </button>
+          </div>
+          <button
+            aria-expanded="true"
+            aria-label="Collapse background options"
+            class="mini-btn"
+            id="baseCollapse"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 9l7 7 7-7" />
+            </svg>
+          </button>
+          <div class="history-controls">
+            <button disabled="" id="undoBtn" title="Undo (Ctrl or Cmd Z)">
+              <svg
+                class="i"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 7L3 11l4 4" />
+                <path d="M3 11h10.5a5.5 5.5 0 0 1 0 11H10" />
+              </svg>
+              <span>Undo</span></button
+            ><button
+              disabled=""
+              id="redoBtn"
+              title="Redo (Ctrl or Cmd Shift Z)"
+            >
+              <svg
+                class="i"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M17 7l4 4-4 4" />
+                <path d="M21 11H10.5a5.5 5.5 0 0 0 0 11H14" />
+              </svg>
+              <span>Redo</span>
+            </button>
+          </div>
+        </div>
+        <div class="area-chip">
+          <button id="areaChip">＋ Define site area</button
+          ><span id="sourceChip">OpenStreetMap</span>
+        </div>
+        <div aria-label="Map controls" class="map-controls">
+          <button
+            aria-label="Map bearing · return north"
+            id="compassButton"
+            title="Map bearing"
+          >
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2L15.2 11.2 12 9.6 8.8 11.2 12 2Z"
+                fill="currentColor"
+              />
+              <path
+                d="M12 22L8.8 12.8 12 14.4 15.2 12.8 12 22Z"
+                fill="currentColor"
+                opacity=".38"
+              />
+            </svg></button
+          ><button
+            aria-label="Set map bearing"
+            hidden=""
+            id="bearingButton"
+            title="Set map bearing"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 4v4M12 16v4M4 12h4M16 12h4" />
+            </svg></button
+          ><button
+            aria-label="Use current location"
+            id="locateBtn"
+            title="Use current location"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="3.2" />
+              <path d="M12 2.5v3.2M12 18.3v3.2M21.5 12h-3.2M5.7 12H2.5" />
+            </svg></button
+          ><button aria-label="Fit plan" id="fitBtn" title="Fit plan">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 9V5.8A1.8 1.8 0 0 1 5.8 4H9" />
+              <path d="M20 9V5.8A1.8 1.8 0 0 0 18.2 4H15" />
+              <path d="M4 15v3.2A1.8 1.8 0 0 0 5.8 20H9" />
+              <path d="M20 15v3.2a1.8 1.8 0 0 1-1.8 1.8H15" />
+            </svg></button
+          ><button aria-pressed="false" id="lockBtn" title="Lock map">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="11" width="14" height="9" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <span>Lock</span></button
+          ><button aria-label="Zoom in" id="zoomInBtn">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg></button
+          ><button aria-label="Zoom out" id="zoomOutBtn">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </div>
+        <div aria-label="Shared drawing tools" class="master-toolbar">
+          <button data-master="place" title="Place selected asset (P)">▣</button
+          ><button data-master="line" title="Point line (L)">⌁</button
+          ><button data-master="area" title="Point area (A)">⬡</button
+          ><button data-master="freeLine" title="Freehand line (F)">〰</button
+          ><button data-master="freeArea" title="Freehand area (Shift F)">
+            ◌</button
+          ><button
+            aria-pressed="true"
+            id="snapToggle"
+            title="Snap to corners (S)"
+          >
+            ⊞
+          </button>
+        </div>
+        <aside aria-label="Planning tools" class="tool-rail" id="toolRail">
+          <div class="rail-head">
+            <button
+              aria-label="Move toolbar"
+              class="rail-drag"
+              id="railMove"
+              title="Drag tools to move"
+            >
+              ⠿</button
+            ><button
+              aria-expanded="true"
+              aria-label="Collapse tools"
+              id="railCollapse"
+            >
+              ‹
+            </button>
+          </div>
+          <button class="rail-tool" id="selectTool" title="Select (V)">
+            <span>↖</span><small>Select</small></button
+          ><button class="rail-tool" data-drawer="draw">
+            <span>✎</span><small>Draw</small></button
+          ><button class="rail-tool" data-drawer="assets">
+            <span>▣</span><small>Assets</small></button
+          ><button class="rail-tool" data-drawer="services">
+            <span>≋</span><small>Services</small></button
+          ><button class="rail-tool" data-drawer="area">
+            <span>⌗</span><small>Site area</small></button
+          ><button class="rail-tool" data-drawer="layers">
+            <span>◫</span><small>Layers</small></button
+          ><button class="rail-tool" data-drawer="help">
+            <span>?</span><small>Help</small>
+          </button>
+        </aside>
+        <section
+          aria-hidden="true"
+          aria-label="Planning options"
+          class="drawer"
+          id="drawer"
+          inert=""
+        >
+          <div class="drawer-head">
+            <div>
+              <div class="eyebrow">SAMI WORKSPACE</div>
+              <h2 id="drawerTitle">Draw</h2>
+            </div>
+            <button aria-label="Close tools" class="close-btn" id="closeDrawer">
+              <svg
+                class="i"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                aria-hidden="true"
+              >
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+          <div class="drawer-content" id="drawerContent"></div>
+        </section>
+        <section
+          aria-live="polite"
+          class="draw-status"
+          hidden=""
+          id="drawStatus"
+        >
+          <div>
+            <strong id="toolName">Drawing</strong
+            ><span id="drawHint">Tap to add points.</span>
+          </div>
+          <div class="draw-actions">
+            <button id="backPointBtn">↶ Point</button
+            ><button id="cancelDrawBtn">Cancel</button
+            ><button class="primary" id="finishDrawBtn">Finish</button>
+          </div>
+        </section>
+        <section class="welcome-card" hidden="" id="welcomeCard">
+          <div class="eyebrow">A CLEARER WAY TO PLAN</div>
+          <h1>Your site. Your space.</h1>
+          <p>
+            Find a site, define the site area, then build a true-scale site
+            plan, assess constraints and plan the HGV route to site. Everything
+            stays together.
+          </p>
+          <button class="wide-btn primary" id="startFindBtn">
+            Find your site</button
+          ><button class="text-btn" id="dismissWelcome">
+            Start drawing here</button
+          ><button class="text-btn" id="welcomeWhySami">Why SAMI?</button>
+        </section>
+        <section aria-live="polite" class="sami-panel" id="samiPanel">
+          <div class="sami-panel-head">
+            <img alt="" src="sami-mark.png?v=2.7.14" />
+            <div>
+              <strong>Ask SAMI</strong
+              ><small>Control your site workspace</small>
+            </div>
+            <button
+              aria-label="Mute SAMI talk-back"
+              class="mini-btn"
+              id="muteSami"
+            >
+              Voice on</button
+            ><button
+              aria-label="Close SAMI conversation"
+              class="close-btn"
+              id="closeSami"
+            >
+              ×
+            </button>
+          </div>
+          <div class="sami-messages" id="samiMessages">
+            <div class="msg sami">
+              Try “create a 15 × 15 m pad in Lion panels”, “add a concrete mixer
+              truck”, “define site area” or “undo”.
+            </div>
+          </div>
+        </section>
+        <button
+          aria-expanded="true"
+          aria-label="Show or hide Ask SAMI"
+          class="ask-collapse"
+          id="askCollapse"
+        >
+          ✦
+        </button>
+        <div class="ask-bar-wrap">
+          <div class="ask-bar">
+            <input
+              aria-label="Ask SAMI request"
+              autocomplete="off"
+              id="askInput"
+              readonly
+              placeholder="Type a request, or tap Ask SAMI…"
+              type="text"
+            /><button
+              aria-label="Ask SAMI by voice"
+              aria-pressed="false"
+              class="send-btn"
+              id="sendBtn"
+            >
+              <img alt="" src="sami-mark.png?v=2.7.14" /><span id="askButtonLabel"
+                >Ask SAMI</span
+              >
+            </button>
+          </div>
+          <div class="voice-hint" id="voiceHint">
+            Tap Ask SAMI to speak · type and press Enter to send
+          </div>
+        </div>
+        <div class="selection-bar" hidden="" id="selectionBar">
+          <span
+            ><strong id="selectionName"></strong
+            ><small id="selectionCount"></small></span
+          ><button
+            data-action="open:selection"
+            aria-label="Properties and colour"
+            title="Properties and colour"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+            </svg></button
+          ><button
+            data-action="editDuplicate"
+            aria-label="Duplicate"
+            title="Duplicate"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="9" y="9" width="11" height="11" rx="2" />
+              <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+            </svg></button
+          ><button data-action="editGroup" aria-label="Group" title="Group">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1.2" />
+              <rect x="14" y="14" width="7" height="7" rx="1.2" />
+              <path d="M10 6.5h5A2.5 2.5 0 0 1 17.5 9v5" />
+            </svg></button
+          ><button
+            data-action="editUngroup"
+            aria-label="Ungroup"
+            title="Ungroup"
+          >
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1.2" />
+              <rect x="14" y="14" width="7" height="7" rx="1.2" />
+            </svg></button
+          ><button data-action="editDelete" aria-label="Delete" title="Delete">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 7h16" />
+              <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+              <path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13" />
+            </svg>
+          </button>
+        </div>
+        <section
+          class="creator-workspace"
+          hidden=""
+          id="creatorWorkspace"
+        ></section>
+        <input
+          accept="image/png,image/jpeg,image/webp"
+          hidden=""
+          id="logoInput"
+          type="file"
+        /><input
+          accept=".svg,.dxf,.vss,.vssx,.vssm,.vsd,.vsdx,.vsdm,.vstx,.vstm,.vdx,.json,.sami-shapes,image/svg+xml,application/json"
+          hidden=""
+          id="shapePackInput"
+          type="file"
+        /><span class="coord-readout" id="coordReadout"></span
+        ><input
+          accept=".sami,.json,.geojson,.kml,.kmz,.trakway,application/json,application/geo+json,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz"
+          hidden=""
+          id="importInput"
+          type="file"
+        /><input
+          accept=".json,.geojson,.kml,.kmz,application/json,application/geo+json,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz"
+          hidden=""
+          id="dataPackInput"
+          type="file"
+        /><input accept="image/*" hidden="" id="photoInput" type="file" />
+        <section aria-hidden="true" class="print-template" id="printTemplate">
+          <div class="print-map-frame">
+            <div class="coord-border top" id="printCoordTop"></div>
+            <div class="coord-border bottom" id="printCoordBottom"></div>
+            <div class="coord-border left" id="printCoordLeft"></div>
+            <div class="coord-border right" id="printCoordRight"></div>
+          </div>
+          <div class="print-titleblock">
+            <div class="print-brand">
+              <img alt="SAMI" src="sami-wordmark.png?v=2.7.14" /><strong
+                >CREATED USING SAMI</strong
+              >
+            </div>
+            <div id="printProjectMeta"></div>
+            <div id="printLegend"></div>
+            <div id="printAssets"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div
+      aria-labelledby="modalTitle"
+      aria-modal="true"
+      class="modal hidden"
+      id="modal"
+      role="dialog"
+    >
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 id="modalTitle">SAMI</h3>
+          <button aria-label="Close dialog" class="close-btn" id="modalClose">
+            <svg
+              class="i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-export-footer" id="modalFooter" hidden></div>
+      </div>
+    </div>
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      class="toast"
+      hidden=""
+      id="toast"
+      role="status"
+    ></div>
+    <script defer="" src="version.js?v=2.7.14"></script>
+    <script defer="" src="leaflet.js?v=2.7.14"></script>
+    <script defer="" src="config.js?v=2.7.14"></script>
+    <script defer="" src="polygon-clipping.js?v=2.7.14"></script>
+    <script defer="" src="geometry.js?v=2.7.14"></script>
+    <script defer="" src="qrcode.js?v=2.7.14"></script>
+    <script defer="" src="documents.js?v=2.7.14"></script>
+    <script defer="" src="intelligence.js?v=2.7.14"></script>
+    <script defer="" src="symbols.js?v=2.7.14"></script>
+    <script defer="" src="builtin-assets.js?v=2.7.14"></script>
+    <script defer="" src="shape-import.js?v=2.7.14"></script>
+    <script defer="" src="studio.js?v=2.7.14"></script>
+    <script defer="" src="project-store.js?v=2.7.14"></script>
+    <script defer="" src="bearing.js?v=2.7.14"></script>
+    <script defer="" src="workspace.js?v=2.7.14"></script>
+    <script defer="" src="engine.js?v=2.7.14"></script>
+    <script defer="" src="pwa.js?v=2.7.14"></script>
+    <script defer="" src="cinema.js?v=2.7.14"></script>
+  </body>
+</html>
